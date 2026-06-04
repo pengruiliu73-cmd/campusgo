@@ -17,7 +17,8 @@
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 40px 20px 60px; /* 底部多留点空间给卡片重叠 */
+            /* 【修改点 1】这里把原来的 60px 改成了 30px，让紫色区域没那么长 */
+            padding: 40px 20px 30px;
             text-align: center;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
@@ -38,40 +39,46 @@
         h1 {
             margin: 0;
             font-size: 28px;
-            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .subtitle {
             margin-top: 10px;
-            font-size: 14px;
             opacity: 0.9;
+            font-size: 14px;
         }
 
-        /* 中间容器样式 */
+        /* 内容容器 */
         .container {
+            max-width: 600px;
+            margin: 0 auto;
             padding: 0 20px;
-            margin-top: -30px; /* 让卡片稍微向上进入紫色区域 */
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center; /* 让内容居中 */
+            /* 【修改点 2】这里控制卡片整体往上提多少。
+               原来是 -40px (提得太多导致被遮挡)，现在改成 -20px (稍微提一点) */
+            margin-top: -20px;
+            position: relative;
+            z-index: 10;
         }
 
-        /* 卡片样式 */
+        /* 卡片链接样式 */
         .card-link {
             text-decoration: none;
             color: inherit;
-            width: 100%;
-            max-width: 350px; /* 限制最大宽度 */
+            display: block;
+            margin-bottom: 20px;
         }
 
+        /* 单个卡片样式 */
         .card {
             background: white;
-            border-radius: 15px;
+            border-radius: 16px;
             padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             display: flex;
             align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             transition: transform 0.2s;
         }
 
@@ -80,19 +87,20 @@
         }
 
         .icon {
-            font-size: 30px;
-            margin-right: 15px;
-            background: #f0f2f5;
             width: 50px;
             height: 50px;
+            background-color: #f0f2f5;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
+            font-size: 24px;
+            margin-right: 15px;
+            flex-shrink: 0;
         }
 
         .info {
-            flex: 1;
+            flex-grow: 1;
         }
 
         .title {
@@ -106,31 +114,32 @@
             color: #888;
         }
 
-        /* 蓝色大按钮样式 */
-        .action-btn-container {
-            margin-top: 20px;
+        /* 底部大按钮样式 */
+        .action-button-container {
             text-align: center;
-            width: 100%;
-            max-width: 350px;
+            margin-top: 30px; /* 距离上面卡片的距离 */
+            margin-bottom: 40px; /* 距离底部的距离 */
         }
 
-        .big-button {
-            display: block;
-            width: 100%;
-            padding: 15px 0;
-            background-color: #3b82f6; /* 漂亮的蓝色 */
+        .big-btn {
+            display: inline-block;
+            width: 100%; /* 让按钮宽一点 */
+            max-width: 300px;
+            padding: 16px 0;
+            background-color: #4a7df8; /* 漂亮的蓝色 */
             color: white;
             text-decoration: none;
-            border-radius: 50px; /* 圆角胶囊形状 */
+            border-radius: 50px;
             font-size: 18px;
             font-weight: bold;
-            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 10px rgba(74, 125, 248, 0.3);
             transition: background-color 0.2s;
         }
 
-        .big-button:hover {
-            background-color: #2563eb;
+        .big-btn:hover {
+            background-color: #3b6ad6;
         }
+
     </style>
 </head>
 <body>
@@ -167,9 +176,9 @@
             </div>
         </a>
 
-        <!-- 👇 这里是你要的蓝色大按钮 👇 -->
-        <div class="action-btn-container">
-            <a href="order.html" class="big-button">立即发布任务 &rarr;</a>
+        <!-- 底部大按钮 -->
+        <div class="action-button-container">
+            <a href="order.html" class="big-btn">立即发布任务 &rarr;</a>
         </div>
 
     </div>

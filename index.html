@@ -11,81 +11,91 @@
             padding: 0;
             background-color: #f5f7fa;
             color: #333;
+            /* 防止页面出现横向滚动条 */
+            overflow-x: hidden;
         }
 
         /* 顶部紫色区域样式 */
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 40px 20px 30px;
+            padding: 40px 20px 50px; /* 底部留白多一点，让卡片嵌入更自然 */
             text-align: center;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
             position: relative;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
         }
 
-        /* 语言切换按钮 */
-        .language-switch {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            backdrop-filter: blur(5px);
-            transition: background 0.3s;
-        }
-
-        .language-switch:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .logo-area h1 {
+        h1 {
             margin: 0;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
             letter-spacing: 1px;
         }
 
-        .logo-area p {
-            margin: 10px 0 0;
+        p.subtitle {
+            margin: 8px 0 0;
             font-size: 14px;
             opacity: 0.9;
         }
 
-        /* 卡片容器 */
-        .container {
-            padding: 0 20px;
-            max-width: 600px;
-            margin: 0 auto;
+        /* 语言切换按钮 */
+        .lang-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        /* 任务卡片样式 */
+        .lang-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 内容容器 */
+        .container {
+            max-width: 600px;
+            margin: -30px auto 0; /* 负边距实现卡片上移效果 */
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 卡片样式 */
         .card {
             background: white;
             border-radius: 16px;
             padding: 20px;
-            margin-top: -20px; /* 让卡片稍微盖住一点紫色背景，增加层次感 */
             margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             display: flex;
             align-items: center;
-            transition: transform 0.2s;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            text-decoration: none; /* 去掉链接下划线 */
+            color: inherit; /* 继承文字颜色 */
         }
 
-        .card:active {
-            transform: scale(0.98);
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
         }
 
         .icon-box {
             width: 50px;
             height: 50px;
-            background-color: #f0f2f5;
+            background: #f0f2f5;
             border-radius: 12px;
             display: flex;
             justify-content: center;
@@ -98,147 +108,120 @@
         .card-content h3 {
             margin: 0 0 5px;
             font-size: 18px;
-            color: #2c3e50;
+            font-weight: 600;
         }
 
         .card-content p {
             margin: 0;
             font-size: 13px;
-            color: #7f8c8d;
+            color: #888;
         }
 
         /* 简单的动画效果 */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .card {
-            animation: fadeIn 0.5s ease-out forwards;
+            animation: fadeInUp 0.5s ease forwards;
         }
 
         .card:nth-child(2) { animation-delay: 0.1s; }
-        .card:nth-child(3) { animation-delay: 0.2s; }
-        .card:nth-child(4) { animation-delay: 0.3s; }
-
     </style>
 </head>
 <body>
 
     <!-- 顶部 Header -->
     <div class="header">
-        <!-- 语言切换按钮 -->
-        <div class="language-switch" onclick="toggleLanguage()">
-            <span id="lang-icon">🌐</span>
-            <span id="lang-text">语言</span>
-        </div>
-
-        <div class="logo-area">
-            <h1 id="main-title">CampusGo 🚀</h1>
-            <p id="sub-title">你的校园生活小助手</p>
-        </div>
+        <button class="lang-btn" onclick="toggleLanguage()">
+            🌐 <span id="lang-text">Language</span>
+        </button>
+        <h1 id="app-title">CampusGo 🚀</h1>
+        <p class="subtitle" id="app-subtitle">你的校园生活小助手</p>
     </div>
 
     <!-- 卡片列表区域 -->
     <div class="container">
-        <!-- 卡片 1 -->
-        <div class="card">
+
+        <!-- 卡片 1：代取快递 (这里 href="#" 代表空链接，你可以换成实际网址) -->
+        <a href="#" class="card" onclick="handleClick('express')">
             <div class="icon-box">📦</div>
             <div class="card-content">
                 <h3 id="card1-title">代取快递</h3>
                 <p id="card1-desc">大件重物不用愁</p>
             </div>
-        </div>
+        </a>
 
-        <!-- 卡片 2 -->
-        <div class="card">
+        <!-- 卡片 2：食堂带饭 -->
+        <a href="#" class="card" onclick="handleClick('food')">
             <div class="icon-box">🍱</div>
             <div class="card-content">
                 <h3 id="card2-title">食堂带饭</h3>
                 <p id="card2-desc">热乎饭菜送到手</p>
             </div>
-        </div>
+        </a>
 
-        <!-- 卡片 3 -->
-        <div class="card">
-            <div class="icon-box">📚</div>
-            <div class="card-content">
-                <h3 id="card3-title">资料打印</h3>
-                <p id="card3-desc">论文作业极速印</p>
-            </div>
-        </div>
+        <!-- 你可以在这里继续添加更多卡片 -->
 
-         <!-- 卡片 4 -->
-         <div class="card">
-            <div class="icon-box">💊</div>
-            <div class="card-content">
-                <h3 id="card4-title">代买药品</h3>
-                <p id="card4-desc">急用药品帮跑腿</p>
-            </div>
-        </div>
     </div>
 
     <script>
-        // 定义翻译字典
+        // 定义语言包数据
         const translations = {
             zh: {
-                btnText: "语言",
-                mainTitle: "CampusGo 🚀",
-                subTitle: "你的校园生活小助手",
-                card1Title: "代取快递",
-                card1Desc: "大件重物不用愁",
-                card2Title: "食堂带饭",
-                card2Desc: "热乎饭菜送到手",
-                card3Title: "资料打印",
-                card3Desc: "论文作业极速印",
-                card4Title: "代买药品",
-                card4Desc: "急用药品帮跑腿"
+                btn: "English",
+                title: "CampusGo 🚀",
+                subtitle: "你的校园生活小助手",
+                card1_title: "代取快递",
+                card1_desc: "大件重物不用愁",
+                card2_title: "食堂带饭",
+                card2_desc: "热乎饭菜送到手"
             },
             ko: {
-                btnText: "언어",
-                mainTitle: "CampusGo 🚀",
-                subTitle: "캠퍼스 라이프 도우미",
-                card1Title: "택배 수령",
-                card1Desc: "무거운 짐 걱정 끝",
-                card2Title: "식당 식사 배달",
-                card2Desc: "따뜻한 밥을 문앞까지",
-                card3Title: "자료 인쇄",
-                card3Desc: "레포트 및 과제 빠른 출력",
-                card4Title: "약국 심부름",
-                card4Desc: "급한 약 구매 대행"
+                btn: "한국어",
+                title: "CampusGo 🚀",
+                subtitle: "캠퍼스 라이프 도우미",
+                card1_title: "택배 수령 대행",
+                card1_desc: "무거운 짐은 걱정 마세요",
+                card2_title: "식당 식사 배달",
+                card2_desc: "따뜻한 밥상을 집까지"
             }
         };
 
-        // 当前语言状态，默认为中文 'zh'
-        let currentLang = 'zh';
+        let currentLang = 'zh'; // 默认中文
 
         function toggleLanguage() {
             // 切换语言状态
-            if (currentLang === 'zh') {
-                currentLang = 'ko';
-            } else {
-                currentLang = 'zh';
-            }
+            currentLang = currentLang === 'zh' ? 'ko' : 'zh';
+            updateText();
+        }
 
-            // 获取对应的翻译内容
+        function updateText() {
             const t = translations[currentLang];
 
-            // 更新页面上的文字
-            document.getElementById('lang-text').innerText = t.btnText;
-            document.getElementById('main-title').innerText = t.mainTitle;
-            document.getElementById('sub-title').innerText = t.subTitle;
+            // 更新界面文字
+            document.getElementById('lang-text').innerText = t.btn;
+            document.getElementById('app-title').innerText = t.title;
+            document.getElementById('app-subtitle').innerText = t.subtitle;
 
-            document.getElementById('card1-title').innerText = t.card1Title;
-            document.getElementById('card1-desc').innerText = t.card1Desc;
+            // 更新卡片文字
+            document.getElementById('card1-title').innerText = t.card1_title;
+            document.getElementById('card1-desc').innerText = t.card1_desc;
+            document.getElementById('card2-title').innerText = t.card2_title;
+            document.getElementById('card2-desc').innerText = t.card2_desc;
+        }
 
-            document.getElementById('card2-title').innerText = t.card2Title;
-            document.getElementById('card2-desc').innerText = t.card2Desc;
-
-            document.getElementById('card3-title').innerText = t.card3Title;
-            document.getElementById('card3-desc').innerText = t.card3Desc;
-
-            document.getElementById('card4-title').innerText = t.card4Title;
-            document.getElementById('card4-desc').innerText = t.card4Desc;
+        // 处理卡片点击事件 (模拟跳转)
+        function handleClick(type) {
+            // 这里只是演示，实际使用时你可以把 href 改成真实链接
+            if(type === 'express') {
+                console.log("用户点击了代取快递");
+                // window.location.href = "express_page.html"; // 取消注释并填入链接即可跳转
+            } else if (type === 'food') {
+                console.log("用户点击了食堂带饭");
+                // window.location.href = "food_page.html";
+            }
         }
     </script>
 </body>

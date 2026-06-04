@@ -25,7 +25,8 @@
             justify-content: center;
             position: relative;
             border-bottom: 1px solid #eee;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            z-index: 10;
         }
 
         .back-btn {
@@ -37,143 +38,145 @@
             cursor: pointer;
         }
 
-        .page-title {
+        .nav-title {
             font-size: 17px;
             font-weight: 600;
         }
 
-        /* 表单区域 */
-        .form-container {
+        /* 表单容器 */
+        .container {
             padding: 20px;
             flex: 1;
+            overflow-y: auto;
         }
 
-        .current-task-info {
+        /* 动态提示条 */
+        .task-type-banner {
             background-color: #eef2ff;
-            color: #5c6ac4;
-            padding: 10px 15px;
+            color: #4f46e5;
+            padding: 12px 15px;
             border-radius: 8px;
-            margin-bottom: 20px;
             font-size: 14px;
+            margin-bottom: 25px;
             font-weight: 500;
-            display: flex;
-            align-items: center;
         }
 
+        /* 表单组 */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
-        .label {
+        .form-label {
             display: block;
             font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #444;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
         }
 
-        .input-box, textarea {
+        .form-input, .form-textarea {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 16px;
-            box-sizing: border-box; /* 关键：防止padding撑大宽度 */
+            font-size: 15px;
+            box-sizing: border-box;
             background-color: #fff;
-            outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.3s;
         }
 
-        .input-box:focus, textarea:focus {
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
             border-color: #667eea;
         }
 
-        textarea {
+        .form-textarea {
             height: 120px;
             resize: none;
             line-height: 1.5;
         }
 
         /* 底部按钮区域 */
-        .bottom-action {
-            padding: 20px;
+        .footer-action {
+            padding: 15px 20px 30px; /* 增加底部内边距适配 iPhone X 等全面屏 */
             background-color: #fff;
-            /* 简单的阴影让按钮区浮起来一点 */
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
         }
 
         .submit-btn {
             width: 100%;
+            padding: 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 14px;
             border-radius: 25px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: bold;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
-            transition: transform 0.1s;
         }
 
         .submit-btn:active {
+            opacity: 0.9;
             transform: scale(0.98);
         }
-
     </style>
 </head>
 <body>
 
     <!-- 顶部导航 -->
     <div class="navbar">
-        <a href="index.html" class="back-btn">&#8592;</a>
-        <span class="page-title">发布跑腿任务</span>
+        <a href="index.html" class="back-btn">←</a>
+        <span class="nav-title">发布跑腿任务</span>
     </div>
 
-    <div class="form-container">
-        <!-- 这里显示当前点击的是哪个任务，代替原来的下拉框 -->
-        <div id="task-display" class="current-task-info">
-            正在发布：帮我取快递
+    <div class="container">
+        <!-- 这里会显示动态的任务类型 -->
+        <div id="typeDisplay" class="task-type-banner">正在加载...</div>
+
+        <div class="form-group">
+            <label class="form-label">具体要求 (越详细越好)</label>
+            <textarea class="form-textarea" placeholder="例如：去南门顺丰驿站，取件码是3-2-2024..."></textarea>
         </div>
 
-        <!-- 具体要求 -->
         <div class="form-group">
-            <label class="label">具体要求 (越详细越好)</label>
-            <textarea placeholder="例如：去南门顺丰驿站，取件码是3-2-2024..."></textarea>
-        </div>
-
-        <!-- 悬赏金额 -->
-        <div class="form-group">
-            <label class="label">悬赏金额 (元)</label>
-            <input type="number" class="input-box" placeholder="例如：5">
+            <label class="form-label">悬赏金额 (元)</label>
+            <input type="number" class="form-input" placeholder="例如：5">
         </div>
     </div>
 
-    <!-- 底部按钮 -->
-    <div class="bottom-action">
-        <button class="submit-btn" onclick="alert('发布成功！')">立即发布</button>
+    <div class="footer-action">
+        <button class="submit-btn" onclick="alert('演示版：发布成功！')">立即发布</button>
     </div>
 
     <script>
-        // 获取URL中的参数，判断用户是从哪个卡片点进来的
-        // 例如 index.html 里的链接是 order.html?type=express
-        const urlParams = new URLSearchParams(window.location.search);
-        const taskType = urlParams.get('type');
+        // 核心逻辑：获取 URL 中的参数并更新页面文字
+        window.onload = function() {
+            // 1. 获取 URL 里的参数 (例如 ?type=食堂带饭)
+            const urlParams = new URLSearchParams(window.location.search);
+            let taskType = urlParams.get('type');
 
-        const displayDiv = document.getElementById('task-display');
+            // 2. 定义默认值，防止直接打开这个页面没参数时报错
+            if (!taskType) {
+                taskType = "普通跑腿";
+            }
 
-        // 根据类型改变顶部的提示文字
-        if (taskType === 'food') {
-            displayDiv.innerText = '正在发布：食堂带饭';
-        } else if (taskType === 'print') {
-            displayDiv.innerText = '正在发布：资料打印';
-        } else if (taskType === 'medicine') {
-            displayDiv.innerText = '正在发布：代买药品';
-        } else {
-            // 默认或者是快递
-            displayDiv.innerText = '正在发布：帮我取快递';
-        }
+            // 3. 将获取到的类型填入页面的蓝色提示条中
+            const displayElement = document.getElementById('typeDisplay');
+            displayElement.innerText = "正在发布：" + taskType;
+
+            // 可选：如果你想根据类型改变输入框的提示语（placeholder），可以在这里加逻辑
+            const textarea = document.querySelector('.form-textarea');
+            if(taskType === '帮我取快递') {
+                textarea.placeholder = "请输入取件码、驿站位置等信息...";
+            } else if (taskType === '食堂带饭') {
+                textarea.placeholder = "请输入想吃的菜名、窗口号、忌口等信息...";
+            } else if (taskType === '资料打印') {
+                textarea.placeholder = "请输入打印份数、黑白/彩色、单双面等信息...";
+            } else if (taskType === '代买药品') {
+                textarea.placeholder = "请输入药品名称、规格、购买地点等信息...";
+            }
+        };
     </script>
-
 </body>
 </html>

@@ -2,84 +2,174 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CampusGo</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; background-color: #f5f7fa; color: #333; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 20px 60px; text-align: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; position: relative; }
-        .language-switch { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 5px 12px; border-radius: 15px; font-size: 12px; cursor: pointer; backdrop-filter: blur(5px); transition: all 0.3s; }
-        .language-switch:hover { background: rgba(255,255,255,0.3); }
-        h1 { margin: 0; font-size: 24px; font-weight: 600; }
-        p.subtitle { margin: 10px 0 0; opacity: 0.9; font-size: 14px; }
-        .container { max-width: 600px; margin: -30px auto 0; padding: 0 20px; position: relative; z-index: 10; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-decoration: none; color: #333; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100px; transition: transform 0.2s; }
+        /* 基础样式 */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f7fa; color: #333; min-height: 100vh; }
+
+        /* 顶部紫色区域 */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px 20px 80px; /* 增加底部内边距给卡片留位置 */
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            position: relative;
+        }
+
+        .header h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: 1px; }
+        .header p { margin: 10px 0 0; font-size: 14px; opacity: 0.9; }
+
+        /* 语言切换按钮 */
+        .lang-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+        }
+        .lang-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+
+        /* 卡片容器 */
+        .container {
+            padding: 0 20px;
+            margin-top: -50px; /* 让卡片上浮 */
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* 单个卡片 */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-decoration: none;
+            color: #333;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
         .card:active { transform: scale(0.98); }
-        .card-title { font-weight: bold; font-size: 16px; margin-top: 10px; text-align: center; }
-        /* 简单的图标占位 */
-        .icon { width: 32px; height: 32px; background: #eef2ff; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #667eea; font-size: 18px; }
+
+        .icon { font-size: 32px; margin-bottom: 10px; display: block; }
+        .card-title { font-size: 16px; font-weight: 600; }
+
     </style>
 </head>
 <body>
 
+    <!-- 头部 -->
     <div class="header">
-        <button class="language-switch" id="langBtn" onclick="toggleLanguage()">Language</button>
-        <h1 id="mainTitle">CampusGo</h1>
-        <p class="subtitle" id="subTitle">您的校园生活助手</p>
+        <button class="lang-btn" id="langBtn" onclick="toggleLanguage()">English</button>
+        <h1 id="appTitle">CampusGo</h1>
+        <p id="appSubtitle">您的校园生活助手</p>
     </div>
 
+    <!-- 功能卡片 -->
     <div class="container">
-        <div class="grid">
-            <!-- 注意：href 后面加了 ?type=express 等参数，用于告诉下一页是什么任务 -->
-            <a href="order.html?type=express" class="card">
-                <div class="icon">📦</div>
-                <div class="card-title" data-zh="代取快递" data-ko="택배 수령">代取快递</div>
-            </a>
-            <a href="order.html?type=food" class="card">
-                <div class="icon">🍱</div>
-                <div class="card-title" data-zh="食堂带饭" data-ko="식사 배달">食堂带饭</div>
-            </a>
-            <a href="order.html?type=print" class="card">
-                <div class="icon">📚</div>
-                <div class="card-title" data-zh="资料打印" data-ko="자료 인쇄">资料打印</div>
-            </a>
-            <a href="order.html?type=medicine" class="card">
-                <div class="icon">💊</div>
-                <div class="card-title" data-zh="代买药品" data-ko="약 구매">代买药品</div>
-            </a>
-        </div>
+        <!-- 这里的 href 链接到 order.html，并带上 type 参数 -->
+        <a href="order.html?type=express" class="card">
+            <span class="icon">📦</span>
+            <span class="card-title" data-key="task_express">代取快递</span>
+        </a>
+        <a href="order.html?type=food" class="card">
+            <span class="icon">🍱</span>
+            <span class="card-title" data-key="task_food">食堂带饭</span>
+        </a>
+        <a href="order.html?type=print" class="card">
+            <span class="icon">📚</span>
+            <span class="card-title" data-key="task_print">资料打印</span>
+        </a>
+        <a href="order.html?type=medicine" class="card">
+            <span class="icon">💊</span>
+            <span class="card-title" data-key="task_medicine">代买药品</span>
+        </a>
     </div>
 
     <script>
-        // 定义翻译字典
+        // 1. 定义语言包 (包含中文、英文、韩文)
         const translations = {
-            zh: { btn: "English", title: "CampusGo", sub: "您的校园生活助手" },
-            ko: { btn: "한국어", title: "CampusGo", sub: "캠퍼스 라이프 도우미" } // 假设你需要韩语
+            'zh': {
+                'btn_label': 'English', // 当前是中文，按钮显示切英文
+                'subtitle': '您的校园生活助手',
+                'task_express': '代取快递',
+                'task_food': '食堂带饭',
+                'task_print': '资料打印',
+                'task_medicine': '代买药品'
+            },
+            'en': {
+                'btn_label': '한국어', // 当前是英文，按钮显示切韩文
+                'subtitle': 'Your Campus Life Assistant',
+                'task_express': 'Pickup Package',
+                'task_food': 'Canteen Food',
+                'task_print': 'Document Print',
+                'task_medicine': 'Buy Medicine'
+            },
+            'ko': {
+                'btn_label': '中文', // 当前是韩文，按钮显示切中文
+                'subtitle': '캠퍼스 라이프 어시스턴트',
+                'task_express': '택배 수령',
+                'task_food': '식당 배달',
+                'task_print': '자료 인쇄',
+                'task_medicine': '약 구매'
+            }
         };
 
-        // 初始化：检查有没有保存过的语言设置
-        let currentLang = localStorage.getItem('app_lang') || 'zh';
-        applyLanguage(currentLang);
+        // 2. 初始化：检查本地存储，如果没有设置过，默认为 'zh' (中文)
+        let currentLang = localStorage.getItem('campus_lang') || 'zh';
 
-        function toggleLanguage() {
-            // 切换语言
-            currentLang = currentLang === 'zh' ? 'ko' : 'zh';
-            localStorage.setItem('app_lang', currentLang); // 保存到本地存储
-            applyLanguage(currentLang);
-        }
+        // 3. 应用语言的函数
+        function applyLanguage() {
+            const t = translations[currentLang];
 
-        function applyLanguage(lang) {
-            // 更新顶部文字
-            document.getElementById('langBtn').innerText = translations[lang].btn;
-            document.getElementById('mainTitle').innerText = translations[lang].title;
-            document.getElementById('subTitle').innerText = translations[lang].sub;
+            // 更新按钮文字
+            document.getElementById('langBtn').innerText = t.btn_label;
 
-            // 更新卡片文字
-            const titles = document.querySelectorAll('.card-title');
-            titles.forEach(el => {
-                el.innerText = el.getAttribute(`data-${lang}`);
+            // 更新副标题
+            document.getElementById('appSubtitle').innerText = t.subtitle;
+
+            // 更新所有卡片的文字
+            const elements = document.querySelectorAll('[data-key]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (t[key]) {
+                    el.innerText = t[key];
+                }
             });
+
+            // 保存当前状态
+            localStorage.setItem('campus_lang', currentLang);
         }
+
+        // 4. 切换语言的逻辑 (点击按钮时触发)
+        function toggleLanguage() {
+            if (currentLang === 'zh') {
+                currentLang = 'en';
+            } else if (currentLang === 'en') {
+                currentLang = 'ko';
+            } else {
+                currentLang = 'zh';
+            }
+            applyLanguage();
+        }
+
+        // 页面加载时立即执行一次
+        applyLanguage();
+
     </script>
 </body>
 </html>

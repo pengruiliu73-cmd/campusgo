@@ -3,98 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampusGo - 校园跑腿</title>
+    <title>CampusGo - 校园生活助手</title>
     <style>
-        body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; text-align: center; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; position: relative; min-height: 100px; }
-        h1 { margin: 0; font-size: 24px; }
-        p.subtitle { opacity: 0.9; margin-top: 5px; font-size: 14px; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
 
-        /* 下拉菜单样式 */
-        .dropdown { position: absolute; top: 15px; right: 15px; display: inline-block; }
-        .dropbtn { background: rgba(255,255,255,0.2); color: white; padding: 8px 12px; font-size: 14px; border: none; cursor: pointer; border-radius: 20px; }
-        .dropdown-content { display: none; position: absolute; right: 0; background-color: white; min-width: 100px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; border-radius: 8px; overflow: hidden; }
-        .dropdown-content a { color: black; padding: 10px 16px; text-decoration: none; display: block; font-size: 14px; }
-        .dropdown-content a:hover { background-color: #f1f1f1; }
-        .show { display: block; }
+        /* 顶部紫色区域样式 */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px 60px; /* 底部多留点空间给卡片重叠 */
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            position: relative;
+        }
 
-        /* 核心修改：卡片样式 */
-        .container { padding: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
-        .card-link { text-decoration: none; color: inherit; width: 45%; min-width: 140px; } 
-        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .card:active { transform: scale(0.95); } 
-        .icon { font-size: 30px; margin-bottom: 10px; }
-        .title { font-weight: bold; font-size: 16px; }
-        .desc { font-size: 12px; color: #888; margin-top: 5px; }
+        .language-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            margin-top: 10px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* 中间容器样式 */
+        .container {
+            padding: 0 20px;
+            margin-top: -30px; /* 让卡片稍微向上进入紫色区域 */
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center; /* 让内容居中 */
+        }
+
+        /* 卡片样式 */
+        .card-link {
+            text-decoration: none;
+            color: inherit;
+            width: 100%;
+            max-width: 350px; /* 限制最大宽度 */
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .card:active {
+            transform: scale(0.98);
+        }
+
+        .icon {
+            font-size: 30px;
+            margin-right: 15px;
+            background: #f0f2f5;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+
+        .info {
+            flex: 1;
+        }
+
+        .title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .desc {
+            font-size: 12px;
+            color: #888;
+        }
+
+        /* 蓝色大按钮样式 */
+        .action-btn-container {
+            margin-top: 20px;
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .big-button {
+            display: block;
+            width: 100%;
+            padding: 15px 0;
+            background-color: #3b82f6; /* 漂亮的蓝色 */
+            color: white;
+            text-decoration: none;
+            border-radius: 50px; /* 圆角胶囊形状 */
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+            transition: background-color 0.2s;
+        }
+
+        .big-button:hover {
+            background-color: #2563eb;
+        }
     </style>
 </head>
 <body>
 
+    <!-- 顶部紫色区域 -->
     <div class="header">
-        <div class="container">
-    <!-- 卡片 1 -->
-    <a href="..." class="card-link">...</a>
-
-    <!-- 卡片 2 -->
-    <a href="..." class="card-link">...</a>
-
-    <!-- 【在这里粘贴你的蓝色按钮代码】 -->
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="order.html" ...>立即发布任务 &rarr;</a>
+        <div class="language-switch">🌐 语言</div>
+        <h1>CampusGo 🚀</h1>
+        <p class="subtitle">你的校园生活小助手</p>
     </div>
 
-</div> <!-- 容器在这里结束 -->
-        <h1 id="site-title">CampusGo 🚀</h1>
-        <p class="subtitle" id="site-subtitle">你的校园生活小助手</p>
-
-        <!-- 语言切换 -->
-        <div class="dropdown">
-            <button onclick="toggleLang()" class="dropbtn">🌐 语言</button>
-            <div id="myDropdown" class="dropdown-content">
-                <a href="#" onclick="setLang('zh')">中文</a>
-                <a href="#" onclick="setLang('ko')">한국어</a>
-            </div>
-        </div>
-    </div>
-
+    <!-- 主要内容区域 -->
     <div class="container">
-        <!-- 【关键修改】这里用 <a> 标签包裹了卡片，href 指向 order.html -->
+
+        <!-- 卡片 1：代取快递 -->
         <a href="order.html" class="card-link">
             <div class="card">
                 <div class="icon">📦</div>
-                <div class="title" data-zh="代取快递" data-ko="택배 수령">代取快递</div>
-                <div class="desc" data-zh="大件重物不用愁" data-ko="무거운 짐 걱정 NO">大件重物不用愁</div>
+                <div class="info">
+                    <div class="title">代取快递</div>
+                    <div class="desc">大件重物不用愁</div>
+                </div>
             </div>
         </a>
 
+        <!-- 卡片 2：食堂带饭 -->
         <a href="order.html" class="card-link">
             <div class="card">
                 <div class="icon">🍱</div>
-                <div class="title" data-zh="食堂带饭" data-ko="학식 배달">食堂带饭</div>
-                <div class="desc" data-zh="热乎饭菜送到手" data-ko="따뜻한 밥상 delivery">热乎饭菜送到手</div>
+                <div class="info">
+                    <div class="title">食堂带饭</div>
+                    <div class="desc">热乎饭菜送到手</div>
+                </div>
             </div>
         </a>
+
+        <!-- 👇 这里是你要的蓝色大按钮 👇 -->
+        <div class="action-btn-container">
+            <a href="order.html" class="big-button">立即发布任务 &rarr;</a>
+        </div>
+
     </div>
 
-    <script>
-        // 语言切换逻辑保持不变
-        function toggleLang() { document.getElementById("myDropdown").classList.toggle("show"); }
-        window.onclick = function(event) { if (!event.target.matches('.dropbtn')) { var dropdowns = document.getElementsByClassName("dropdown-content"); for (var i = 0; i < dropdowns.length; i++) { var openDropdown = dropdowns[i]; if (openDropdown.classList.contains('show')) { openDropdown.classList.remove('show'); } } } }
-
-        const texts = {
-            zh: { title: "CampusGo 🚀", sub: "你的校园生活小助手" },
-            ko: { title: "CampusGo 🚀", sub: "캠퍼스 라이프 도우미" }
-        };
-        function setLang(lang) {
-            document.getElementById('site-title').innerText = texts[lang].title;
-            document.getElementById('site-subtitle').innerText = texts[lang].sub;
-            document.querySelectorAll('[data-zh]').forEach(el => { el.innerText = el.getAttribute('data-' + lang); });
-        }
-    </script>
-<!-- 新增的跳转按钮 -->
-<div style="text-align: center; margin-bottom: 20px;">
-    <a href="order.html" style="display: inline-block; padding: 15px 30px; background-color: #007bff; color: white; text-decoration: none; border-radius: 50px; font-size: 18px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        立即发布任务 &rarr;
-    </a>
-</div></body>
+</body>
 </html>

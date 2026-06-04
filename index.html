@@ -6,17 +6,20 @@
     <title>CampusGo - 校园跑腿</title>
     <style>
         body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; text-align: center; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; position: relative; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; position: relative; min-height: 100px; /* 防止头部太矮 */ }
         h1 { margin: 0; font-size: 24px; }
         p.subtitle { opacity: 0.9; margin-top: 5px; font-size: 14px; }
 
-        /* --- 下拉菜单样式开始 --- */
+        /* --- 下拉菜单样式 (修复版) --- */
         .dropdown {
             position: absolute;
             top: 15px;
             right: 15px;
             display: inline-block;
+            z-index: 100; /* 保证在最上层 */
         }
+
+        /* 按钮样式 */
         .dropbtn {
             background-color: rgba(255, 255, 255, 0.2);
             color: white;
@@ -24,160 +27,165 @@
             font-size: 14px;
             border: none;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
+            gap: 5px;
         }
-        /* 下拉内容（默认隐藏） */
+
+        /* 菜单内容区域 (默认隐藏) */
         .dropdown-content {
-            display: none;
+            display: none; /* 关键：默认不显示 */
             position: absolute;
             right: 0;
-            background-color: #f9f9f9;
-            min-width: 100px;
+            background-color: #fff;
+            min-width: 120px;
             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
             z-index: 1;
-            border-radius: 5px;
+            border-radius: 8px;
             overflow: hidden;
+            margin-top: 5px;
         }
-        /* 下拉选项样式 */
-        .dropdown-content div {
+
+        /* 菜单里的选项 */
+        .dropdown-content a {
             color: black;
-            padding: 10px 16px;
+            padding: 12px 16px;
             text-decoration: none;
             display: block;
-            cursor: pointer;
-            text-align: left;
             font-size: 14px;
+            border-bottom: 1px solid #eee;
         }
-        /* 鼠标悬停变色 */
-        .dropdown-content div:hover {background-color: #f1f1f1;}
-        /* 鼠标悬停显示下拉框 */
-        .dropdown:hover .dropdown-content {display: block;}
-        .dropdown:hover .dropbtn {background-color: rgba(255, 255, 255, 0.4);}
-        /* --- 下拉菜单样式结束 --- */
 
-        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {background-color: #f1f1f1;}
+
+        /* --- 核心修复：通过JS添加类名来控制显示 --- */
+        .show {
+            display: block !important;
+        }
+
+        /* 主体内容区 */
+        .container { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 600px; margin: 0 auto; }
         .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; cursor: pointer; }
-        .card:active { transform: scale(0.98); }
+        .card:active { transform: scale(0.95); }
         .icon { font-size: 30px; margin-bottom: 10px; display: block; }
-        .card h3 { margin: 5px 0; font-size: 16px; color: #333; }
+        .card h3 { margin: 0 0 5px 0; font-size: 16px; color: #333; }
         .card p { margin: 0; font-size: 12px; color: #888; }
+
         footer { margin-top: 40px; color: #aaa; font-size: 12px; padding-bottom: 20px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <!-- 语言切换下拉菜单 -->
-        <div class="dropdown">
-            <button class="dropbtn">🌐 <span id="lang-label">Language</span> ▾</button>
-            <div class="dropdown-content">
-                <div onclick="setLanguage('zh')">🇨🇳 中文</div>
-                <div onclick="setLanguage('ko')">🇰🇷 한국어</div>
-            </div>
-        </div>
-
-        <h1 id="site-title">CampusGo 🚀</h1>
-        <p class="subtitle" id="site-subtitle">你的校园生活小助手</p>
-    </div>
-
-    <div class="container">
-        <div class="grid">
-            <!-- 卡片 1 -->
-            <div class="card" onclick="alert(t('express_alert'))">
-                <span class="icon">📦</span>
-                <h3 id="card1-title">代取快递</h3>
-                <p id="card1-desc">大件重物不用愁</p>
-            </div>
-            <!-- 卡片 2 -->
-            <div class="card" onclick="alert(t('food_alert'))">
-                <span class="icon">🍱</span>
-                <h3 id="card2-title">食堂带饭</h3>
-                <p id="card2-desc">热乎饭菜送到手</p>
-            </div>
-            <!-- 卡片 3 -->
-            <div class="card" onclick="alert(t('print_alert'))">
-                <span class="icon">🖨️</span>
-                <h3 id="card3-title">打印资料</h3>
-                <p id="card3-desc">复习资料极速印</p>
-            </div>
-            <!-- 卡片 4 -->
-            <div class="card" onclick="alert(t('other_alert'))">
-                <span class="icon">🏃</span>
-                <h3 id="card4-title">万能帮帮</h3>
-                <p id="card4-desc">只要合法都能帮</p>
-            </div>
+<div class="header">
+    <!-- 语言切换下拉菜单 -->
+    <div class="dropdown">
+        <button onclick="toggleMenu()" class="dropbtn">
+            🌐 <span id="lang-label">Language</span> ▾
+        </button>
+        <div id="myDropdown" class="dropdown-content">
+            <a href="#" onclick="changeLang('zh')">🇨🇳 中文</a>
+            <a href="#" onclick="changeLang('ko')">🇰🇷 한국어</a>
         </div>
     </div>
 
-    <footer id="footer">© 2024 CampusGo Team</footer>
+    <h1 id="site-title">CampusGo 🚀</h1>
+    <p class="subtitle" id="site-subtitle">你的校园生活小助手</p>
+</div>
 
-    <script>
-        // 1. 定义语言包字典
-        const translations = {
-            zh: {
-                label: "语言",
-                title: "CampusGo 🚀",
-                subtitle: "你的校园生活小助手",
-                card1_t: "代取快递", card1_d: "大件重物不用愁",
-                card2_t: "食堂带饭", card2_d: "热乎饭菜送到手",
-                card3_t: "打印资料", card3_d: "复习资料极速印",
-                card4_t: "万能帮帮", card4_d: "只要合法都能帮",
-                alert_express: "代取快递功能开发中...",
-                alert_food: "食堂带饭功能开发中...",
-                alert_print: "打印功能开发中...",
-                alert_other: "更多功能敬请期待...",
-                footer: "© 2024 CampusGo 团队"
-            },
-            ko: {
-                label: "언어",
-                title: "CampusGo 🚀",
-                subtitle: "당신의 캠퍼스 라이프 도우미",
-                card1_t: "택배 수령", card1_d: "무거운 짐 걱정 끝",
-                card2_t: "식사 배달", card2_d: "따뜻한 밥상까지",
-                card3_t: "인쇄 서비스", card3_d: "복습 자료 빠르게",
-                card4_t: "심부름 대행", card4_d: "합법적이라면 모두 가능",
-                alert_express: "택배 수령 기능 개발 중...",
-                alert_food: "식사 배달 기능 개발 중...",
-                alert_print: "인쇄 기능 개발 중...",
-                alert_other: "더 많은 기능을 기대해 주세요...",
-                footer: "© 2024 CampusGo 팀"
+<div class="container">
+    <div class="card" onclick="alert('功能开发中...')">
+        <span class="icon">📦</span>
+        <h3 id="service-1-title">代取快递</h3>
+        <p id="service-1-desc">大件重物不用愁</p>
+    </div>
+    <div class="card" onclick="alert('功能开发中...')">
+        <span class="icon">🍱</span>
+        <h3 id="service-2-title">食堂带饭</h3>
+        <p id="service-2-desc">热乎饭菜送到手</p>
+    </div>
+    <div class="card" onclick="alert('功能开发中...')">
+        <span class="icon">💊</span>
+        <h3 id="service-3-title">帮买药品</h3>
+        <p id="service-3-desc">急用药快速送达</p>
+    </div>
+    <div class="card" onclick="alert('功能开发中...')">
+        <span class="icon">🗑️</span>
+        <h3 id="service-4-title">帮忙扔垃圾</h3>
+        <p id="service-4-desc">懒人福音服务</p>
+    </div>
+</div>
+
+<footer id="footer-text">© 2024 CampusGo Team</footer>
+
+<script>
+    // 1. 定义语言包
+    const translations = {
+        zh: {
+            label: "Language",
+            title: "CampusGo 🚀",
+            subtitle: "你的校园生活小助手",
+            s1_title: "代取快递", s1_desc: "大件重物不用愁",
+            s2_title: "食堂带饭", s2_desc: "热乎饭菜送到手",
+            s3_title: "帮买药品", s3_desc: "急用药快速送达",
+            s4_title: "帮忙扔垃圾", s4_desc: "懒人福音服务",
+            footer: "© 2024 CampusGo Team"
+        },
+        ko: {
+            label: "언어",
+            title: "CampusGo 🚀",
+            subtitle: "당신의 캠퍼스 생활 도우미",
+            s1_title: "택배 수령", s1_desc: "무거운 짐 걱정 끝",
+            s2_title: "식사 배달", s2_desc: "따뜻한 밥을 문앞까지",
+            s3_title: "약 구매", s3_desc: "응급 약품 빠른 배송",
+            s4_title: "쓰레기 처리", s4_desc: "게으름뱅이를 위한 서비스",
+            footer: "© 2024 CampusGo 팀"
+        }
+    };
+
+    // 2. 切换语言的函数
+    function changeLang(lang) {
+        const t = translations[lang];
+        document.getElementById('lang-label').innerText = t.label;
+        document.getElementById('site-title').innerText = t.title;
+        document.getElementById('site-subtitle').innerText = t.subtitle;
+        document.getElementById('service-1-title').innerText = t.s1_title;
+        document.getElementById('service-1-desc').innerText = t.s1_desc;
+        document.getElementById('service-2-title').innerText = t.s2_title;
+        document.getElementById('service-2-desc').innerText = t.s2_desc;
+        document.getElementById('service-3-title').innerText = t.s3_title;
+        document.getElementById('service-3-desc').innerText = t.s3_desc;
+        document.getElementById('service-4-title').innerText = t.s4_title;
+        document.getElementById('service-4-desc').innerText = t.s4_desc;
+        document.getElementById('footer-text').innerText = t.footer;
+
+        // 选完语言后，自动收起菜单
+        toggleMenu();
+    }
+
+    // 3. 控制菜单开关的函数 (解决拉不上去的问题)
+    function toggleMenu() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    // 4. 点击页面其他地方时，关闭菜单 (增强体验)
+    window.onclick = function(event) {
+        if (!event.target.matches('.dropbtn') && !event.target.matches('.dropbtn *')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
             }
-        };
-
-        let currentLang = 'zh'; // 默认中文
-
-        // 2. 切换语言的函数
-        function setLanguage(lang) {
-            currentLang = lang;
-            const t_data = translations[lang];
-
-            // 更新页面上的文字
-            document.getElementById('lang-label').innerText = t_data.label;
-            document.getElementById('site-title').innerText = t_data.title;
-            document.getElementById('site-subtitle').innerText = t_data.subtitle;
-
-            document.getElementById('card1-title').innerText = t_data.card1_t;
-            document.getElementById('card1-desc').innerText = t_data.card1_d;
-
-            document.getElementById('card2-title').innerText = t_data.card2_t;
-            document.getElementById('card2-desc').innerText = t_data.card2_d;
-
-            document.getElementById('card3-title').innerText = t_data.card3_t;
-            document.getElementById('card3-desc').innerText = t_data.card3_d;
-
-            document.getElementById('card4-title').innerText = t_data.card4_t;
-            document.getElementById('card4-desc').innerText = t_data.card4_d;
-
-            document.getElementById('footer').innerText = t_data.footer;
         }
+    }
+</script>
 
-        // 辅助函数：获取当前语言的提示语
-        function t(key) {
-            return translations[currentLang][key];
-        }
-    </script>
 </body>
 </html>

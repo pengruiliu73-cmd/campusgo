@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>填写订单 - CampusGo</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; }
+        .header { background: white; padding: 15px; text-align: center; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; }
+        .back-btn { text-decoration: none; color: #333; font-size: 20px; padding-right: 10px; }
+        h2 { margin: 0; font-size: 18px; flex-grow: 1; }
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #666; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 12px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; background: white; }
+        button.submit-btn { width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 18px; margin-top: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部导航栏 -->
+    <div class="header">
+        <a href="index.html" class="back-btn">←</a>
+        <h2>发布跑腿任务</h2>
+        <div style="width: 20px;"></div> <!-- 占位符保持居中 -->
+    </div>
+
+    <!-- 表单区域 -->
+    <div class="container">
+        <form action="#" method="POST">
+            <div class="form-group">
+                <label>任务类型</label>
+                <select>
+                    <option>帮我取快递</option>
+                    <option>帮我买饭/带饭</option>
+                    <option>帮我打印资料</option>
+                    <option>其他杂事</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>具体要求 (越详细越好)</label>
+                <textarea rows="4" placeholder="例如：去南门顺丰驿站，取件码是3-2-2024..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>悬赏金额 (元)</label>
+                <input type="number" placeholder="例如：5">
+            </div>
+
+            <button type="button" class="submit-btn" onclick="alert('提交功能正在开发中！')">立即发布</button>
+        </form>
+    </div>
+
+</body>
+</html>

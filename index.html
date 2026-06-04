@@ -6,96 +6,76 @@
     <title>CampusGo - 校园跑腿</title>
     <style>
         body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; text-align: center; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; position: relative; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; position: relative; min-height: 100px; }
         h1 { margin: 0; font-size: 24px; }
         p.subtitle { opacity: 0.9; margin-top: 5px; font-size: 14px; }
 
-        /* 语言切换按钮样式 */
-        .lang-switch { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 15px; font-size: 12px; cursor: pointer; border: 1px solid rgba(255,255,255,0.4); }
+        /* 下拉菜单样式 */
+        .dropdown { position: absolute; top: 15px; right: 15px; display: inline-block; }
+        .dropbtn { background: rgba(255,255,255,0.2); color: white; padding: 8px 12px; font-size: 14px; border: none; cursor: pointer; border-radius: 20px; }
+        .dropdown-content { display: none; position: absolute; right: 0; background-color: white; min-width: 100px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; border-radius: 8px; overflow: hidden; }
+        .dropdown-content a { color: black; padding: 10px 16px; text-decoration: none; display: block; font-size: 14px; }
+        .dropdown-content a:hover { background-color: #f1f1f1; }
+        .show { display: block; }
 
-        .container { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; cursor: pointer; }
-        .card:active { transform: scale(0.95); }
-        .icon { font-size: 30px; margin-bottom: 10px; display: block; }
-        .title { font-weight: bold; font-size: 16px; margin-bottom: 5px; display: block; }
-        .desc { font-size: 12px; color: #888; display: block; }
-
-        .footer { margin-top: 30px; color: #aaa; font-size: 12px; padding-bottom: 20px; }
+        /* 核心修改：卡片样式 */
+        .container { padding: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
+        .card-link { text-decoration: none; color: inherit; width: 45%; min-width: 140px; } 
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .card:active { transform: scale(0.95); } 
+        .icon { font-size: 30px; margin-bottom: 10px; }
+        .title { font-weight: bold; font-size: 16px; }
+        .desc { font-size: 12px; color: #888; margin-top: 5px; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <!-- 语言切换按钮 -->
-        <div class="lang-switch" onclick="toggleLanguage()">🇰🇷 한국어 / 🇨🇳 中文</div>
-
         <h1 id="site-title">CampusGo 🚀</h1>
         <p class="subtitle" id="site-subtitle">你的校园生活小助手</p>
+
+        <!-- 语言切换 -->
+        <div class="dropdown">
+            <button onclick="toggleLang()" class="dropbtn">🌐 语言</button>
+            <div id="myDropdown" class="dropdown-content">
+                <a href="#" onclick="setLang('zh')">中文</a>
+                <a href="#" onclick="setLang('ko')">한국어</a>
+            </div>
+        </div>
     </div>
 
     <div class="container">
-        <!-- 卡片 1：代取快递 -->
-        <div class="card" onclick="alert('功能开发中...')">
-            <span class="icon">📦</span>
-            <span class="title" data-zh="代取快递" data-ko="택배 수령">代取快递</span>
-            <span class="desc" data-zh="大件重物不用愁" data-ko="무거운 짐 걱정 끝">大件重物不用愁</span>
-        </div>
+        <!-- 【关键修改】这里用 <a> 标签包裹了卡片，href 指向 order.html -->
+        <a href="order.html" class="card-link">
+            <div class="card">
+                <div class="icon">📦</div>
+                <div class="title" data-zh="代取快递" data-ko="택배 수령">代取快递</div>
+                <div class="desc" data-zh="大件重物不用愁" data-ko="무거운 짐 걱정 NO">大件重物不用愁</div>
+            </div>
+        </a>
 
-        <!-- 卡片 2：食堂带饭 -->
-        <div class="card" onclick="alert('功能开发中...')">
-            <span class="icon">🍱</span>
-            <span class="title" data-zh="食堂带饭" data-ko="학식 배달">食堂带饭</span>
-            <span class="desc" data-zh="热乎饭菜送到手" data-ko="따뜻한 밥을 문앞까지">热乎饭菜送到手</span>
-        </div>
-
-        <!-- 卡片 3：打印资料 -->
-        <div class="card" onclick="alert('功能开发中...')">
-            <span class="icon">🖨️</span>
-            <span class="title" data-zh="打印资料" data-ko="인쇄 및 복사">打印资料</span>
-            <span class="desc" data-zh="复习资料帮你印" data-ko="시험 자료 인쇄 대행">复习资料帮你印</span>
-        </div>
-
-        <!-- 卡片 4：万能帮帮 -->
-        <div class="card" onclick="alert('功能开发中...')">
-            <span class="icon">🙋‍♂️</span>
-            <span class="title" data-zh="万能帮帮" data-ko="기타 심부름">万能帮帮</span>
-            <span class="desc" data-zh="只要合法都能帮" data-ko="합법적인 일이라면 뭐든">只要合法都能帮</span>
-        </div>
+        <a href="order.html" class="card-link">
+            <div class="card">
+                <div class="icon">🍱</div>
+                <div class="title" data-zh="食堂带饭" data-ko="학식 배달">食堂带饭</div>
+                <div class="desc" data-zh="热乎饭菜送到手" data-ko="따뜻한 밥상 delivery">热乎饭菜送到手</div>
+            </div>
+        </a>
     </div>
 
-    <div class="footer">© 2024 CampusGo Team</div>
-
     <script>
-        // 当前语言状态 (默认中文)
-        let currentLang = 'zh';
+        // 语言切换逻辑保持不变
+        function toggleLang() { document.getElementById("myDropdown").classList.toggle("show"); }
+        window.onclick = function(event) { if (!event.target.matches('.dropbtn')) { var dropdowns = document.getElementsByClassName("dropdown-content"); for (var i = 0; i < dropdowns.length; i++) { var openDropdown = dropdowns[i]; if (openDropdown.classList.contains('show')) { openDropdown.classList.remove('show'); } } } }
 
-        function toggleLanguage() {
-            // 切换语言标记
-            currentLang = (currentLang === 'zh') ? 'ko' : 'zh';
-
-            // 获取所有需要翻译的元素
-            const elements = document.querySelectorAll('[data-zh]');
-
-            // 遍历并更新文字
-            elements.forEach(el => {
-                if (currentLang === 'ko') {
-                    el.innerText = el.getAttribute('data-ko');
-                } else {
-                    el.innerText = el.getAttribute('data-zh');
-                }
-            });
-
-            // 单独处理标题和副标题
-            const title = document.getElementById('site-title');
-            const subtitle = document.getElementById('site-subtitle');
-
-            if (currentLang === 'ko') {
-                title.innerText = 'CampusGo 🚀'; // 英文部分保持不变
-                subtitle.innerText = '캠퍼스 생활 도우미'; // 韩语：校园生活助手
-            } else {
-                title.innerText = 'CampusGo 🚀';
-                subtitle.innerText = '你的校园生活小助手';
-            }
+        const texts = {
+            zh: { title: "CampusGo 🚀", sub: "你的校园生活小助手" },
+            ko: { title: "CampusGo 🚀", sub: "캠퍼스 라이프 도우미" }
+        };
+        function setLang(lang) {
+            document.getElementById('site-title').innerText = texts[lang].title;
+            document.getElementById('site-subtitle').innerText = texts[lang].sub;
+            document.querySelectorAll('[data-zh]').forEach(el => { el.innerText = el.getAttribute('data-' + lang); });
         }
     </script>
 </body>

@@ -17,7 +17,6 @@
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            /* 【修改点 1】这里把原来的 60px 改成了 30px，让紫色区域没那么长 */
             padding: 40px 20px 30px;
             text-align: center;
             border-bottom-left-radius: 20px;
@@ -25,6 +24,7 @@
             position: relative;
         }
 
+        /* 语言切换按钮 */
         .language-switch {
             position: absolute;
             top: 20px;
@@ -32,17 +32,18 @@
             background: rgba(255, 255, 255, 0.2);
             padding: 5px 10px;
             border-radius: 15px;
-            font-size: 14px;
             cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            user-select: none;
         }
 
         h1 {
             margin: 0;
             font-size: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            letter-spacing: 1px;
         }
 
         .subtitle {
@@ -51,34 +52,29 @@
             font-size: 14px;
         }
 
-        /* 内容容器 */
+        /* 卡片容器 */
         .container {
+            padding: 20px;
             max-width: 600px;
             margin: 0 auto;
-            padding: 0 20px;
-            /* 【修改点 2】这里控制卡片整体往上提多少。
-               原来是 -40px (提得太多导致被遮挡)，现在改成 -20px (稍微提一点) */
-            margin-top: -20px;
-            position: relative;
-            z-index: 10;
         }
 
-        /* 卡片链接样式 */
+        /* 单个卡片链接样式 */
         .card-link {
+            display: block;
             text-decoration: none;
             color: inherit;
-            display: block;
             margin-bottom: 20px;
         }
 
-        /* 单个卡片样式 */
+        /* 卡片主体 */
         .card {
             background: white;
-            border-radius: 16px;
+            border-radius: 15px;
             padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             display: flex;
             align-items: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             transition: transform 0.2s;
         }
 
@@ -96,11 +92,10 @@
             justify-content: center;
             font-size: 24px;
             margin-right: 15px;
-            flex-shrink: 0;
         }
 
-        .info {
-            flex-grow: 1;
+        .text-group {
+            flex: 1;
         }
 
         .title {
@@ -114,53 +109,36 @@
             color: #888;
         }
 
-        /* 底部大按钮样式 */
-        .action-button-container {
-            text-align: center;
-            margin-top: 30px; /* 距离上面卡片的距离 */
-            margin-bottom: 40px; /* 距离底部的距离 */
+        /* 底部大按钮样式 (已隐藏) */
+        .action-btn-container {
+            display: none; /* 这里设置为 none 就不显示了 */
         }
-
-        .big-btn {
-            display: inline-block;
-            width: 100%; /* 让按钮宽一点 */
-            max-width: 300px;
-            padding: 16px 0;
-            background-color: #4a7df8; /* 漂亮的蓝色 */
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(74, 125, 248, 0.3);
-            transition: background-color 0.2s;
-        }
-
-        .big-btn:hover {
-            background-color: #3b6ad6;
-        }
-
     </style>
 </head>
 <body>
 
-    <!-- 顶部紫色区域 -->
+    <!-- 头部区域 -->
     <div class="header">
-        <div class="language-switch">🌐 语言</div>
-        <h1>CampusGo 🚀</h1>
-        <p class="subtitle">你的校园生活小助手</p>
+        <!-- 语言切换按钮 -->
+        <div class="language-switch" onclick="toggleLanguage()">
+            <span id="lang-icon">🌐</span>
+            <span id="lang-text">语言</span>
+        </div>
+
+        <h1 id="site-title">CampusGo 🚀</h1>
+        <p class="subtitle" id="site-subtitle">你的校园生活小助手</p>
     </div>
 
-    <!-- 主要内容区域 -->
+    <!-- 内容区域 -->
     <div class="container">
 
         <!-- 卡片 1：代取快递 -->
         <a href="order.html" class="card-link">
             <div class="card">
                 <div class="icon">📦</div>
-                <div class="info">
-                    <div class="title">代取快递</div>
-                    <div class="desc">大件重物不用愁</div>
+                <div class="text-group">
+                    <div class="title" data-zh="代取快递" data-ko="택배 수령">代取快递</div>
+                    <div class="desc" data-zh="大件重物不用愁" data-ko="무거운 짐 걱정 NO">大件重物不用愁</div>
                 </div>
             </div>
         </a>
@@ -169,19 +147,57 @@
         <a href="order.html" class="card-link">
             <div class="card">
                 <div class="icon">🍱</div>
-                <div class="info">
-                    <div class="title">食堂带饭</div>
-                    <div class="desc">热乎饭菜送到手</div>
+                <div class="text-group">
+                    <div class="title" data-zh="食堂带饭" data-ko="학식 배달">食堂带饭</div>
+                    <div class="desc" data-zh="热乎饭菜送到手" data-ko="따뜻한 밥상 delivery">热乎饭菜送到手</div>
                 </div>
             </div>
         </a>
 
-        <!-- 底部大按钮 -->
-        <div class="action-button-container">
-            <a href="order.html" class="big-btn">立即发布任务 &rarr;</a>
+        <!-- 底部按钮 (已按要求移除显示，但保留结构以防万一) -->
+        <div class="action-btn-container" style="text-align: center; margin-top: 30px;">
+            <a href="order.html" style="display: inline-block; padding: 15px 40px; background-color: #4e8df5; color: white; text-decoration: none; border-radius: 30px; font-weight: bold; box-shadow: 0 4px 10px rgba(78, 141, 245, 0.3);">
+                立即发布任务 &rarr;
+            </a>
         </div>
 
     </div>
 
+    <!-- 脚本区域：负责语言切换逻辑 -->
+    <script>
+        // 当前语言状态，默认为中文 'zh'
+        let currentLang = 'zh';
+
+        function toggleLanguage() {
+            // 切换语言状态
+            if (currentLang === 'zh') {
+                currentLang = 'ko';
+            } else {
+                currentLang = 'zh';
+            }
+            updateText();
+        }
+
+        function updateText() {
+            // 1. 更新右上角的按钮文字
+            const langText = document.getElementById('lang-text');
+            langText.innerText = currentLang === 'zh' ? '语言' : '언어';
+
+            // 2. 更新标题和副标题
+            document.getElementById('site-title').innerText = currentLang === 'zh' ? 'CampusGo 🚀' : 'CampusGo 🚀'; // 标题通常不需要变，或者你可以改
+            document.getElementById('site-subtitle').innerText = currentLang === 'zh' ? '你的校园生活小助手' : '캠퍼스 라이프 도우미';
+
+            // 3. 遍历所有带有 data-zh 属性的元素进行替换
+            const elements = document.querySelectorAll('[data-zh]');
+
+            elements.forEach(el => {
+                if (currentLang === 'zh') {
+                    el.innerText = el.getAttribute('data-zh');
+                } else {
+                    el.innerText = el.getAttribute('data-ko');
+                }
+            });
+        }
+    </script>
 </body>
 </html>

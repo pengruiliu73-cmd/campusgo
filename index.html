@@ -6,60 +6,97 @@
     <title>CampusGo - 校园跑腿</title>
     <style>
         body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; text-align: center; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .header h1 { margin: 0; font-size: 24px; font-weight: bold; }
-        .header p { margin-top: 10px; opacity: 0.9; font-size: 14px; }
-        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: -20px; }
-        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: transform 0.2s; cursor: pointer; }
-        .card:active { transform: scale(0.98); }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; position: relative; }
+        h1 { margin: 0; font-size: 24px; }
+        p.subtitle { opacity: 0.9; margin-top: 5px; font-size: 14px; }
+
+        /* 语言切换按钮样式 */
+        .lang-switch { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 15px; font-size: 12px; cursor: pointer; border: 1px solid rgba(255,255,255,0.4); }
+
+        .container { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; cursor: pointer; }
+        .card:active { transform: scale(0.95); }
         .icon { font-size: 30px; margin-bottom: 10px; display: block; }
-        .title { font-weight: bold; font-size: 16px; color: #333; display: block; }
-        .desc { font-size: 12px; color: #888; margin-top: 5px; display: block; }
-        .footer { margin-top: 30px; color: #aaa; font-size: 12px; }
+        .title { font-weight: bold; font-size: 16px; margin-bottom: 5px; display: block; }
+        .desc { font-size: 12px; color: #888; display: block; }
+
+        .footer { margin-top: 30px; color: #aaa; font-size: 12px; padding-bottom: 20px; }
     </style>
 </head>
 <body>
 
-    <!-- 顶部标题区域 -->
     <div class="header">
-        <h1>CampusGo 🚀</h1>
-        <p>你的校园生活小助手</p>
+        <!-- 语言切换按钮 -->
+        <div class="lang-switch" onclick="toggleLanguage()">🇰🇷 한국어 / 🇨🇳 中文</div>
+
+        <h1 id="site-title">CampusGo 🚀</h1>
+        <p class="subtitle" id="site-subtitle">你的校园生活小助手</p>
     </div>
 
-    <!-- 功能按钮区域 -->
     <div class="container">
-        <div class="grid">
-            <!-- 按钮 1 -->
-            <div class="card" onclick="alert('代取快递功能开发中...')">
-                <span class="icon">📦</span>
-                <span class="title">代取快递</span>
-                <span class="desc">大件重物不用愁</span>
-            </div>
-            <!-- 按钮 2 -->
-            <div class="card" onclick="alert('食堂带饭功能开发中...')">
-                <span class="icon">🍱</span>
-                <span class="title">食堂带饭</span>
-                <span class="desc">热乎饭菜送到手</span>
-            </div>
-            <!-- 按钮 3 -->
-            <div class="card" onclick="alert('打印服务功能开发中...')">
-                <span class="icon">🖨️</span>
-                <span class="title">帮忙打印</span>
-                <span class="desc">资料课件轻松印</span>
-            </div>
-            <!-- 按钮 4 -->
-            <div class="card" onclick="alert('万能求助功能开发中...')">
-                <span class="icon">🙋‍♂️</span>
-                <span class="title">万能求助</span>
-                <span class="desc">其他小事尽管说</span>
-            </div>
+        <!-- 卡片 1：代取快递 -->
+        <div class="card" onclick="alert('功能开发中...')">
+            <span class="icon">📦</span>
+            <span class="title" data-zh="代取快递" data-ko="택배 수령">代取快递</span>
+            <span class="desc" data-zh="大件重物不用愁" data-ko="무거운 짐 걱정 끝">大件重物不用愁</span>
         </div>
 
-        <div class="footer">
-            © 2024 CampusGo Team
+        <!-- 卡片 2：食堂带饭 -->
+        <div class="card" onclick="alert('功能开发中...')">
+            <span class="icon">🍱</span>
+            <span class="title" data-zh="食堂带饭" data-ko="학식 배달">食堂带饭</span>
+            <span class="desc" data-zh="热乎饭菜送到手" data-ko="따뜻한 밥을 문앞까지">热乎饭菜送到手</span>
+        </div>
+
+        <!-- 卡片 3：打印资料 -->
+        <div class="card" onclick="alert('功能开发中...')">
+            <span class="icon">🖨️</span>
+            <span class="title" data-zh="打印资料" data-ko="인쇄 및 복사">打印资料</span>
+            <span class="desc" data-zh="复习资料帮你印" data-ko="시험 자료 인쇄 대행">复习资料帮你印</span>
+        </div>
+
+        <!-- 卡片 4：万能帮帮 -->
+        <div class="card" onclick="alert('功能开发中...')">
+            <span class="icon">🙋‍♂️</span>
+            <span class="title" data-zh="万能帮帮" data-ko="기타 심부름">万能帮帮</span>
+            <span class="desc" data-zh="只要合法都能帮" data-ko="합법적인 일이라면 뭐든">只要合法都能帮</span>
         </div>
     </div>
 
+    <div class="footer">© 2024 CampusGo Team</div>
+
+    <script>
+        // 当前语言状态 (默认中文)
+        let currentLang = 'zh';
+
+        function toggleLanguage() {
+            // 切换语言标记
+            currentLang = (currentLang === 'zh') ? 'ko' : 'zh';
+
+            // 获取所有需要翻译的元素
+            const elements = document.querySelectorAll('[data-zh]');
+
+            // 遍历并更新文字
+            elements.forEach(el => {
+                if (currentLang === 'ko') {
+                    el.innerText = el.getAttribute('data-ko');
+                } else {
+                    el.innerText = el.getAttribute('data-zh');
+                }
+            });
+
+            // 单独处理标题和副标题
+            const title = document.getElementById('site-title');
+            const subtitle = document.getElementById('site-subtitle');
+
+            if (currentLang === 'ko') {
+                title.innerText = 'CampusGo 🚀'; // 英文部分保持不变
+                subtitle.innerText = '캠퍼스 생활 도우미'; // 韩语：校园生活助手
+            } else {
+                title.innerText = 'CampusGo 🚀';
+                subtitle.innerText = '你的校园生活小助手';
+            }
+        }
+    </script>
 </body>
 </html>

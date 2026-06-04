@@ -2,55 +2,178 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>填写订单 - CampusGo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>发布跑腿任务</title>
     <style>
-        body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; }
-        .header { background: white; padding: 15px; text-align: center; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; }
-        .back-btn { text-decoration: none; color: #333; font-size: 20px; padding-right: 10px; }
-        h2 { margin: 0; font-size: 18px; flex-grow: 1; }
-        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; color: #666; font-weight: bold; }
-        input, select, textarea { width: 100%; padding: 12px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; background: white; }
-        button.submit-btn { width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 18px; margin-top: 10px; cursor: pointer; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏 */
+        .navbar {
+            background-color: #fff;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-bottom: 1px solid #eee;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 15px;
+            font-size: 24px;
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        /* 表单区域 */
+        .form-container {
+            padding: 20px;
+            flex: 1;
+        }
+
+        .current-task-info {
+            background-color: #eef2ff;
+            color: #5c6ac4;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #444;
+        }
+
+        .input-box, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box; /* 关键：防止padding撑大宽度 */
+            background-color: #fff;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-box:focus, textarea:focus {
+            border-color: #667eea;
+        }
+
+        textarea {
+            height: 120px;
+            resize: none;
+            line-height: 1.5;
+        }
+
+        /* 底部按钮区域 */
+        .bottom-action {
+            padding: 20px;
+            background-color: #fff;
+            /* 简单的阴影让按钮区浮起来一点 */
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
+            transition: transform 0.1s;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
     </style>
 </head>
 <body>
 
-    <!-- 顶部导航栏 -->
-    <div class="header">
-        <a href="index.html" class="back-btn">←</a>
-        <h2>发布跑腿任务</h2>
-        <div style="width: 20px;"></div> <!-- 占位符保持居中 -->
+    <!-- 顶部导航 -->
+    <div class="navbar">
+        <a href="index.html" class="back-btn">&#8592;</a>
+        <span class="page-title">发布跑腿任务</span>
     </div>
 
-    <!-- 表单区域 -->
-    <div class="container">
-        <form action="#" method="POST">
-            <div class="form-group">
-                <label>任务类型</label>
-                <select>
-                    <option>帮我取快递</option>
-                    <option>帮我买饭/带饭</option>
-                    <option>帮我打印资料</option>
-                    <option>其他杂事</option>
-                </select>
-            </div>
+    <div class="form-container">
+        <!-- 这里显示当前点击的是哪个任务，代替原来的下拉框 -->
+        <div id="task-display" class="current-task-info">
+            正在发布：帮我取快递
+        </div>
 
-            <div class="form-group">
-                <label>具体要求 (越详细越好)</label>
-                <textarea rows="4" placeholder="例如：去南门顺丰驿站，取件码是3-2-2024..."></textarea>
-            </div>
+        <!-- 具体要求 -->
+        <div class="form-group">
+            <label class="label">具体要求 (越详细越好)</label>
+            <textarea placeholder="例如：去南门顺丰驿站，取件码是3-2-2024..."></textarea>
+        </div>
 
-            <div class="form-group">
-                <label>悬赏金额 (元)</label>
-                <input type="number" placeholder="例如：5">
-            </div>
-
-            <button type="button" class="submit-btn" onclick="alert('提交功能正在开发中！')">立即发布</button>
-        </form>
+        <!-- 悬赏金额 -->
+        <div class="form-group">
+            <label class="label">悬赏金额 (元)</label>
+            <input type="number" class="input-box" placeholder="例如：5">
+        </div>
     </div>
+
+    <!-- 底部按钮 -->
+    <div class="bottom-action">
+        <button class="submit-btn" onclick="alert('发布成功！')">立即发布</button>
+    </div>
+
+    <script>
+        // 获取URL中的参数，判断用户是从哪个卡片点进来的
+        // 例如 index.html 里的链接是 order.html?type=express
+        const urlParams = new URLSearchParams(window.location.search);
+        const taskType = urlParams.get('type');
+
+        const displayDiv = document.getElementById('task-display');
+
+        // 根据类型改变顶部的提示文字
+        if (taskType === 'food') {
+            displayDiv.innerText = '正在发布：食堂带饭';
+        } else if (taskType === 'print') {
+            displayDiv.innerText = '正在发布：资料打印';
+        } else if (taskType === 'medicine') {
+            displayDiv.innerText = '正在发布：代买药品';
+        } else {
+            // 默认或者是快递
+            displayDiv.innerText = '正在发布：帮我取快递';
+        }
+    </script>
 
 </body>
 </html>

@@ -2,216 +2,247 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CampusGo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusGo - 校园生活助手</title>
     <style>
-        /* 基础重置 */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
             background-color: #f5f7fa;
             color: #333;
-            min-height: 100vh;
         }
 
-        /* 顶部紫色区域 */
+        /* 顶部紫色区域样式 */
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            /* 关键：底部内边距加大到 90px，防止挡住卡片 */
-            padding: 50px 20px 90px 20px;
-            border-bottom-left-radius: 30px;
-            border-bottom-right-radius: 30px;
+            padding: 40px 20px 50px;
             text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
             position: relative;
-            z-index: 1;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            font-size: 14px;
-            opacity: 0.9;
         }
 
         /* 语言切换按钮 */
-        .lang-btn {
+        .language-switch {
             position: absolute;
             top: 20px;
             right: 20px;
             background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            color: white;
             padding: 6px 12px;
             border-radius: 20px;
-            font-size: 12px;
             cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
             backdrop-filter: blur(5px);
-            transition: all 0.3s;
+            transition: background 0.3s;
+            user-select: none;
         }
 
-        .lang-btn:active {
-            transform: scale(0.95);
+        .language-switch:hover {
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* 内容区域容器 */
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+    
+
+        .subtitle {
+            margin: 10px 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* 卡片容器 */
         .container {
             padding: 0 20px;
-            margin-top: -40px; /* 让卡片稍微往上浮一点，产生层叠感 */
+            max-width: 600px;
+            margin: -30px auto 0;
             position: relative;
-            z-index: 2;
+            z-index: 10;
         }
 
-        /* 网格布局 */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+        /* 卡片链接样式 */
+        .card-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            margin-bottom: 20px;
         }
 
-        /* 功能卡片 */
+        /* 卡片主体 */
         .card {
             background: white;
             border-radius: 16px;
-            padding: 25px 15px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 140px; /* 固定高度，整齐划一 */
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .card:active {
             transform: scale(0.98);
         }
 
-        .icon {
-            font-size: 32px;
-            margin-bottom: 12px;
+        .card-link:hover .card {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
 
-        .title {
-            font-size: 15px;
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            background-color: #f0f2f5;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .card-content h3 {
+            margin: 0 0 5px;
+            font-size: 18px;
             font-weight: 600;
-            color: #333;
         }
 
+        .card-content p {
+            margin: 0;
+            font-size: 13px;
+            color: #888;
+        }
     </style>
 </head>
 <body>
 
-    <!-- 头部 -->
+    <!-- 顶部 Header -->
     <div class="header">
-        <button class="lang-btn" id="langBtn" onclick="toggleLanguage()">中文</button>
-        <h1 id="appTitle">CampusGo</h1>
-        <p id="appSubtitle">您的校园生活助手</p>
+        <!-- 语言切换按钮 -->
+        <div class="language-switch" onclick="toggleLanguage()">
+            <span>🌐</span>
+            <span id="lang-text">语言</span>
+        </div>
+
+        <h1 id="main-title">CampusGo 🚀</h1>
+        <p class="subtitle" id="sub-title">你的校园生活小助手</p>
     </div>
 
-    <!-- 内容区 -->
+    <!-- 卡片列表区域 -->
     <div class="container">
-        <div class="grid">
+        
+        <!-- 卡片 1：代取快递 -->
+        <a href="order.html" class="card-link">
             <div class="card">
-                <div class="icon">📦</div>
-                <div class="title" data-i18n="express">代取快递</div>
+                <div class="icon-box">📦</div>
+                <div class="card-content">
+                    <h3 id="card1-title">代取快递</h3>
+                    <p id="card1-desc">大件重物不用愁</p>
+                </div>
             </div>
+        </a>
+
+        <!-- 卡片 2：食堂带饭 -->
+        <a href="order.html" class="card-link">
             <div class="card">
-                <div class="icon">🍱</div>
-                <div class="title" data-i18n="food">食堂带饭</div>
+                <div class="icon-box">🍱</div>
+                <div class="card-content">
+                    <h3 id="card2-title">食堂带饭</h3>
+                    <p id="card2-desc">热乎饭菜送到手</p>
+                </div>
             </div>
+        </a>
+
+        <!-- 卡片 3：资料打印 -->
+        <a href="order.html" class="card-link">
             <div class="card">
-                <div class="icon">📚</div>
-                <div class="title" data-i18n="print">资料打印</div>
+                <div class="icon-box">📚</div>
+                <div class="card-content">
+                    <h3 id="card3-title">资料打印</h3>
+                    <p id="card3-desc">论文作业极速印</p>
+                </div>
             </div>
+        </a>
+
+        <!-- 卡片 4：代买药品 -->
+        <a href="order.html" class="card-link">
             <div class="card">
-                <div class="icon">💊</div>
-                <div class="title" data-i18n="medicine">代买药品</div>
+                <div class="icon-box">💊</div>
+                <div class="card-content">
+                    <h3 id="card4-title">代买药品</h3>
+                    <p id="card4-desc">急用药品帮跑腿</p>
+                </div>
             </div>
-        </div>
+        </a>
+
     </div>
 
     <script>
-        // 1. 定义翻译字典
+        // 定义翻译字典
         const translations = {
             zh: {
-                btn: "韩文", // 当前是中文，按钮显示“切换到韩文”
-                title: "CampusGo",
-                subtitle: "您的校园生活助手",
-                express: "代取快递",
-                food: "食堂带饭",
-                print: "资料打印",
-                medicine: "代买药品"
+                btnText: "语言",
+                mainTitle: "CampusGo 🚀",
+                subTitle: "你的校园生活小助手",
+                card1Title: "代取快递",
+                card1Desc: "大件重物不用愁",
+                card2Title: "食堂带饭",
+                card2Desc: "热乎饭菜送到手",
+                card3Title: "资料打印",
+                card3Desc: "论文作业极速印",
+                card4Title: "代买药品",
+                card4Desc: "急用药品帮跑腿"
             },
             ko: {
-                btn: "中文", // 当前是韩文，按钮显示“切换到中文”
-                title: "CampusGo",
-                subtitle: "캠퍼스 라이프 도우미",
-                express: "택배 수령",
-                food: "식당 식사 배달",
-                print: "자료 인쇄",
-                medicine: "약국 심부름"
+                btnText: "언어",
+                mainTitle: "CampusGo 🚀",
+                subTitle: "캠퍼스 라이프 도우미",
+                card1Title: "택배 수령",
+                card1Desc: "무거운 짐 걱정 끝",
+                card2Title: "식당 식사 배달",
+                card2Desc: "따뜻한 밥을 문앞까지",
+                card3Title: "자료 인쇄",
+                card3Desc: "레포트 및 과제 빠른 출력",
+                card4Title: "약국 심부름",
+                card4Desc: "급한 약 구매 대행"
             }
         };
 
-        // 2. 核心逻辑：初始化语言
-        let currentLang = 'zh'; // 【关键修改】默认强制设为 'zh' (中文)
+        // 当前语言状态，默认为中文 'zh'
+        let currentLang = 'zh';
 
-        function initLanguage() {
-            // 检查本地存储是否有用户之前的选择
-            const savedLang = localStorage.getItem('campus_language');
-
-            if (savedLang) {
-                // 如果有保存过的，就用保存的
-                currentLang = savedLang;
-            } else {
-                // 如果没有保存过（第一次来），强制使用中文，忽略系统语言
-                currentLang = 'zh';
-            }
-
-            applyLanguage();
+        function toggleLanguage() {
+            // 切换语言状态
+            currentLang = currentLang === 'zh' ? 'ko' : 'zh';
+            updateText();
         }
 
-        // 3. 应用语言到页面
-        function applyLanguage() {
+        function updateText() {
             const t = translations[currentLang];
 
-            // 更新按钮文字
-            document.getElementById('langBtn').innerText = t.btn;
+            // 更新界面文字
+            document.getElementById('lang-text').innerText = t.btnText;
+            document.getElementById('main-title').innerText = t.mainTitle;
+            document.getElementById('sub-title').innerText = t.subTitle;
 
-            // 更新标题和副标题
-            document.getElementById('appTitle').innerText = t.title;
-            document.getElementById('appSubtitle').innerText = t.subtitle;
-
-            // 更新所有带有 data-i18n 属性的元素
-            const elements = document.querySelectorAll('[data-i18n]');
-            elements.forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (t[key]) {
-                    el.innerText = t[key];
-                }
-            });
-
-            // 保存到本地存储，下次进来记住这次的选择
-            localStorage.setItem('campus_language', currentLang);
+            // 更新卡片文字
+            document.getElementById('card1-title').innerText = t.card1Title;
+            document.getElementById('card1-desc').innerText = t.card1Desc;
+            document.getElementById('card2-title').innerText = t.card2Title;
+            document.getElementById('card2-desc').innerText = t.card2Desc;
+            document.getElementById('card3-title').innerText = t.card3Title;
+            document.getElementById('card3-desc').innerText = t.card3Desc;
+            document.getElementById('card4-title').innerText = t.card4Title;
+            document.getElementById('card4-desc').innerText = t.card4Desc;
         }
-
-        // 4. 切换语言函数
-        function toggleLanguage() {
-            // 简单的切换逻辑：如果是 zh 就变 ko，反之亦然
-            currentLang = (currentLang === 'zh') ? 'ko' : 'zh';
-            applyLanguage();
-        }
-
-        // 页面加载时执行初始化
-        window.onload = initLanguage;
-
     </script>
 </body>
 </html>

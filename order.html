@@ -7,175 +7,127 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f7fa;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            margin: 0; padding: 0; background-color: #f5f7fa; color: #333;
+            display: flex; flex-direction: column; min-height: 100vh;
         }
-
-        /* 顶部导航栏 */
         .navbar {
-            background-color: #fff;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            border-bottom: 1px solid #eee;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            z-index: 10;
+            background-color: #fff; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; border-bottom: 1px solid #eee;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02); z-index: 10;
         }
-
         .back-btn {
-            position: absolute;
-            left: 15px;
-            font-size: 24px;
-            color: #333;
-            text-decoration: none;
-            cursor: pointer;
+            position: absolute; left: 15px; font-size: 24px;
+            color: #333; text-decoration: none; cursor: pointer;
         }
-
-        .nav-title {
-            font-size: 17px;
-            font-weight: 600;
-        }
-
-        /* 表单容器 */
-        .container {
-            padding: 20px;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        /* 动态提示条 */
+        .nav-title { font-size: 17px; font-weight: 600; }
+        .container { padding: 20px; flex: 1; overflow-y: auto; }
         .task-type-banner {
-            background-color: #eef2ff;
-            color: #4f46e5;
-            padding: 12px 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 25px;
-            font-weight: 500;
+            background-color: #eef2ff; color: #4f46e5;
+            padding: 12px 15px; border-radius: 8px;
+            font-size: 14px; margin-bottom: 25px; font-weight: 500;
         }
-
-        /* 表单组 */
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 15px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
+        .form-group { margin-bottom: 25px; }
+        .form-label { display: block; font-size: 15px; font-weight: bold; margin-bottom: 10px; color: #333; }
         .form-input, .form-textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 15px;
-            box-sizing: border-box;
-            background-color: #fff;
-            transition: border-color 0.3s;
+            width: 100%; padding: 12px; border: 1px solid #ddd;
+            border-radius: 8px; font-size: 15px; box-sizing: border-box;
+            background-color: #fff; transition: border-color 0.3s;
         }
-
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .form-textarea {
-            height: 120px;
-            resize: none;
-            line-height: 1.5;
-        }
-
-        /* 底部按钮区域 */
+        .form-input:focus, .form-textarea:focus { outline: none; border-color: #667eea; }
+        .form-textarea { height: 120px; resize: none; line-height: 1.5; }
         .footer-action {
-            padding: 15px 20px 30px; /* 增加底部内边距适配 iPhone X 等全面屏 */
-            background-color: #fff;
+            padding: 15px 20px 30px; background-color: #fff;
             box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
         }
-
         .submit-btn {
-            width: 100%;
-            padding: 14px;
+            width: 100%; padding: 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
+            color: white; border: none; border-radius: 25px;
+            font-size: 16px; font-weight: bold; cursor: pointer;
             box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
         }
-
-        .submit-btn:active {
-            opacity: 0.9;
-            transform: scale(0.98);
-        }
+        .submit-btn:active { opacity: 0.9; transform: scale(0.98); }
     </style>
 </head>
 <body>
-
-    <!-- 顶部导航 -->
     <div class="navbar">
-        <a href="index.html" class="back-btn">←</a>
-        <span class="nav-title">发布跑腿任务</span>
+        <!-- 返回主页时，把当前语言也传回去 -->
+        <a href="index.html" class="back-btn" id="back-link">←</a>
+        <span class="nav-title" id="nav-title">发布跑腿任务</span>
     </div>
 
     <div class="container">
-        <!-- 这里会显示动态的任务类型 -->
         <div id="typeDisplay" class="task-type-banner">正在加载...</div>
-
         <div class="form-group">
-            <label class="form-label">具体要求 (越详细越好)</label>
-            <textarea class="form-textarea" placeholder="例如：去南门顺丰驿站，取件码是3-2-2024..."></textarea>
+            <label class="form-label" id="label-require">具体要求 (越详细越好)</label>
+            <textarea id="task-textarea" class="form-textarea" placeholder="例如：去南门顺丰驿站..."></textarea>
         </div>
-
         <div class="form-group">
-            <label class="form-label">悬赏金额 (元)</label>
-            <input type="number" class="form-input" placeholder="例如：5">
+            <label class="form-label" id="label-price">悬赏金额 (元)</label>
+            <input type="number" class="form-input" id="price-input" placeholder="例如：5">
         </div>
     </div>
 
     <div class="footer-action">
-        <button class="submit-btn" onclick="alert('演示版：发布成功！')">立即发布</button>
+        <button class="submit-btn" id="submit-btn" onclick="alert('演示版：发布成功！')">立即发布</button>
     </div>
 
     <script>
-        // 核心逻辑：获取 URL 中的参数并更新页面文字
+        const translations = {
+            zh: {
+                navTitle: "发布跑腿任务", bannerPrefix: "正在发布：",
+                labelRequire: "具体要求 (越详细越好)", labelPrice: "悬赏金额 (元)", submitBtn: "立即发布",
+                placeholders: {
+                    express: "请输入取件码、驿站位置等信息...",
+                    food: "请输入想吃的菜名、窗口号、忌口等信息...",
+                    print: "请输入打印份数、黑白/彩色、单双面等信息...",
+                    medicine: "请输入药品名称、规格、购买地点等信息...",
+                    default: "请输入具体的跑腿要求..."
+                },
+                pricePlaceholder: "例如：5"
+            },
+            ko: {
+                navTitle: "심부름 요청 등록", bannerPrefix: "진행 중: ",
+                labelRequire: "상세 요구사항 (구체적일수록 좋습니다)", labelPrice: "보상 금액 (위안)", submitBtn: "즉시 등록",
+                placeholders: {
+                    express: "택배 수령 코드, 픽업 위치 등을 입력하세요...",
+                    food: "원하는 메뉴, 식당 창구, 알레르기 등을 입력하세요...",
+                    print: "인쇄 부수, 흑백/컬러, 양면/단면 등을 입력하세요...",
+                    medicine: "약 이름, 규격, 구매처 등을 입력하세요...",
+                    default: "구체적인 심부름 요구사항을 입력하세요..."
+                },
+                pricePlaceholder: "예: 5"
+            }
+        };
+
         window.onload = function() {
-            // 1. 获取 URL 里的参数 (例如 ?type=食堂带饭)
             const urlParams = new URLSearchParams(window.location.search);
-            let taskType = urlParams.get('type');
+            let taskType = urlParams.get('type') || 'default';
+            let lang = urlParams.get('lang') || 'zh';
+            const t = translations[lang] || translations.zh;
 
-            // 2. 定义默认值，防止直接打开这个页面没参数时报错
-            if (!taskType) {
-                taskType = "普通跑腿";
+            // 更新页面所有文字
+            document.getElementById('nav-title').innerText = t.navTitle;
+            document.getElementById('label-require').innerText = t.labelRequire;
+            document.getElementById('label-price').innerText = t.labelPrice;
+            document.getElementById('submit-btn').innerText = t.submitBtn;
+            document.getElementById('price-input').placeholder = t.pricePlaceholder;
+
+            // 更新顶部蓝色提示条
+            let displayType = taskType;
+            if(lang === 'ko') {
+                const typeMap = { express: '택배 수령', food: '식당 배달', print: '자료 인쇄', medicine: '약 구매' };
+                displayType = typeMap[taskType] || taskType;
             }
+            document.getElementById('typeDisplay').innerText = t.bannerPrefix + displayType;
 
-            // 3. 将获取到的类型填入页面的蓝色提示条中
-            const displayElement = document.getElementById('typeDisplay');
-            displayElement.innerText = "正在发布：" + taskType;
+            // 更新输入框提示语
+            const textarea = document.getElementById('task-textarea');
+            textarea.placeholder = t.placeholders[taskType] || t.placeholders.default;
 
-            // 可选：如果你想根据类型改变输入框的提示语（placeholder），可以在这里加逻辑
-            const textarea = document.querySelector('.form-textarea');
-            if(taskType === '帮我取快递') {
-                textarea.placeholder = "请输入取件码、驿站位置等信息...";
-            } else if (taskType === '食堂带饭') {
-                textarea.placeholder = "请输入想吃的菜名、窗口号、忌口等信息...";
-            } else if (taskType === '资料打印') {
-                textarea.placeholder = "请输入打印份数、黑白/彩色、单双面等信息...";
-            } else if (taskType === '代买药品') {
-                textarea.placeholder = "请输入药品名称、规格、购买地点等信息...";
-            }
+            // 更新返回按钮的链接，保持语言状态
+            document.getElementById('back-link').setAttribute('href', `index.html?lang=${lang}`);
         };
     </script>
 </body>

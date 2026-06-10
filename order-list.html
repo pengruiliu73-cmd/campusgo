@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>接单大厅</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; margin: 0; padding: 0; background-color: #f5f7fa; color: #333; min-height: 100vh; }
+        .navbar { background-color: #fff; height: 50px; display: flex; align-items: center; justify-content: center; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid #eee; }
+        .back-btn { position: absolute; left: 15px; font-size: 24px; color: #333; text-decoration: none; }
+        .nav-title { font-size: 17px; font-weight: 600; }
+        .wallet-bar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; }
+        .wallet-bar h2 { margin: 0; font-size: 28px; }
+        .wallet-bar p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
+        .task-list { padding: 15px; display: flex; flex-direction: column; gap: 15px; padding-bottom: 30px; }
+        .task-card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .task-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .task-type { font-size: 12px; background: #eef2ff; color: #4f46e5; padding: 2px 8px; border-radius: 4px; }
+        .task-price { font-size: 18px; font-weight: bold; color: #e63946; }
+        .task-content { font-size: 14px; color: #555; margin-bottom: 10px; line-height: 1.4; word-break: break-all;}
+        .task-time { font-size: 12px; color: #999; margin-bottom: 12px; }
+        .task-actions { display: flex; gap: 10px; }
+        .btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn:active { transform: scale(0.96); }
+        .btn-accept { background-color: #667eea; color: white; }
+        .btn-complete { background-color: #10b981; color: white; }
+        .btn-disabled { background-color: #e5e7eb; color: #9ca3af; cursor: not-allowed; }
+        .empty-tip { text-align: center; padding: 50px 0; color: #999; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="index.html" class="back-btn" id="back-link">←</a>
+        <span class="nav-title" id="nav-title">接单大厅</span>
+    </div>
+
+    <div class="wallet-bar">
+        <p id="wallet-label">我的累计报酬</p>
+        <h2>¥ <span id="wallet-balance">0.00</span></h2>
+    </div>
+
+    <div class="task-list" id="task-list">
+        <!-- 任务卡片将由 JS 动态渲染 -->
+    </div>
+
+    <script>
+        const translations = {
+            zh: {
+                navTitle: "接单大厅", walletLabel: "我的累计报酬", emptyTip: "暂无跑腿任务，去首页发布一个吧！",
+                typeMap: { express: '代取快递', food: '食堂带饭', print: '资料打印', medicine: '代买药品' },
+                statusMap: { PENDING: '待接单', ACCEPTED: '进行中', COMPLETED: '已完成' },
+                btnAccept: '立即接单', btnComplete: '确认完成', btnWait: '等待接单',
+                rewardMsg: "太棒了！报酬已到账！"
+            },
+            ko: {
+                navTitle: "접수 대기실", walletLabel: "누적 보상", emptyTip: "심부름이 없습니다. 홈에서 등록해보세요!",
+                typeMap: { express: '택배 수령', food: '식당 배달', print: '자료 인쇄', medicine: '약 구매' },
+                statusMap: { PENDING: '접수 대기', ACCEPTED: '진행 중', COMPLETED: '완료' },
+                btnAccept: '즉시 접수', btnComplete: '완료 확인', btnWait: '접수 대기',
+                rewardMsg: "축하합니다! 보상이 지급되었습니다!"
+            }
+        };
+
+        let currentLang = 'zh';
+        let t = translations.zh;
+
+        // 获取钱包余额
+        function getWalletBalance() {
+            return parseFloat(localStorage.getItem('campusgo_wallet') || '0');
+        }
+
+        // 渲染任务列表
+        function renderTasks() {
+            const tasks = JSON.parse(localStorage.getItem('campusgo_tasks') || '[]');
+            const listContainer = document.getElementById('task-list');
+            listContainer.innerHTML = '';
+
+            if (tasks.length === 0) {
+                listContainer.innerHTML = `<div class="empty-tip">${t.emptyTip}</div>`;
+                return;
+            }
+
+            tasks.forEach(task => {
+                const typeName = t.typeMap[task.type] || task.type;
+                const statusName = t.statusMap[task.status] || task.status;
+                
+                let actionBtn = '';
+                if (task.status === 'PENDING') {
+                    actionBtn = `<button class="btn btn-accept" onclick="acceptTask(${task.id})">${t.btnAccept}</button>`;
+                } else if (task.status === 'ACCEPTED') {
+                    actionBtn = `<button class="btn btn-complete" onclick="completeTask(${task.id}, ${task.price})">${t.btnComplete}</button>`;
+                } else {
+                    actionBtn = `<button class="btn btn-disabled" disabled>${t.btnWait}</button>`;
+                }
+
+                const cardHtml = `
+                    <div class="task-card">
+                        <div class="task-header">
+                            <span class="task-type">${typeName} · ${statusName}</span>
+                            <span class="task-price">¥${task.price.toFixed(2)}</span>
+                        </div>
+                        <div class="task-content">${task.content}</div>
+                        <div class="task-time">${task.createTime}</div>
+                        <div class="task-actions">${actionBtn}</div>
+                    </div>
+                `;
+                listContainer.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+
+        // 接单逻辑
+        window.acceptTask = function(taskId) {
+            let tasks = JSON.parse(localStorage.getItem('campusgo_tasks') || '[]');
+            const task = tasks.find(t => t.id === taskId);
+            if (task && task.status === 'PENDING') {
+                task.status = 'ACCEPTED';
+                localStorage.setItem('campusgo_tasks', JSON.stringify(tasks));
+                renderTasks();
+            }
+        };
+
+        // 完成订单并结算报酬
+        window.completeTask = function(taskId, price) {
+            let tasks = JSON.parse(localStorage.getItem('campusgo_tasks') || '[]');
+            const task = tasks.find(t => t.id === taskId);
+            if (task && task.status === 'ACCEPTED') {
+                task.status = 'COMPLETED';
+                localStorage.setItem('campusgo_tasks', JSON.stringify(tasks));
+                
+                // 【核心】：累加报酬到钱包
+                let balance = getWalletBalance();
+                balance += price;
+                localStorage.setItem('campusgo_wallet', balance.toFixed(2));
+                document.getElementById('wallet-balance').innerText = balance.toFixed(2);
+                
+                alert(t.rewardMsg);
+                renderTasks();
+            }
+        };
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            currentLang = urlParams.get('lang') || 'zh';
+            t = translations[currentLang] || translations.zh;
+
+            document.getElementById('nav-title').innerText = t.navTitle;
+            document.getElementById('wallet-label').innerText = t.walletLabel;
+            document.getElementById('wallet-balance').innerText = getWalletBalance().toFixed(2);
+            document.getElementById('back-link').setAttribute('href', `index.html?lang=${currentLang}`);
+            
+            renderTasks();
+        };
+    </script>
+</body>
+</html>

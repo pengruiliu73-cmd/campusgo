@@ -27,9 +27,25 @@
         .language-switch:hover { background: rgba(255, 255, 255, 0.3); }
         h1 { margin: 0; font-size: 26px; font-weight: 700; letter-spacing: 1px; }
         .subtitle { margin: 10px 0 0; font-size: 14px; opacity: 0.9; }
-        .container {
+        
+        /* 钱包与进度卡片样式 */
+        .dashboard {
             max-width: 600px; margin: -60px auto 0; padding: 0 20px;
-            position: relative; z-index: 10;
+            position: relative; z-index: 10; display: flex; flex-direction: column; gap: 15px;
+        }
+        .dash-card {
+            background: white; border-radius: 20px; padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .dash-card h3 { font-size: 14px; color: #888; margin-bottom: 5px; }
+        .dash-card .value { font-size: 24px; font-weight: bold; color: #333; }
+        .dash-card .value.wallet { color: #e63946; }
+        .dash-card .value.progress { color: #667eea; }
+
+        /* 功能菜单网格 */
+        .container {
+            max-width: 600px; margin: 15px auto 0; padding: 0 20px 30px;
             display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
         }
         .card-link { display: block; text-decoration: none; color: inherit; }
@@ -59,6 +75,21 @@
         <p class="subtitle" id="sub-title">您的校园生活助手</p>
     </div>
 
+    <!-- 顶部数据看板 -->
+    <div class="dashboard">
+        <div class="dash-card">
+            <div>
+                <h3 id="wallet-label">我的钱包</h3>
+                <div class="value wallet">¥ <span id="wallet-balance">0.00</span></div>
+            </div>
+            <div style="text-align: right;">
+                <h3 id="progress-label">当前订单进度</h3>
+                <div class="value progress"><span id="active-orders">0</span> <span id="progress-unit">单进行中</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 功能菜单 -->
     <div class="container">
         <a href="order.html?type=express&lang=zh" class="card-link" data-type="express">
             <div class="card">
@@ -87,12 +118,13 @@
                 </div>
             </div>
         </a>
-        <a href="order.html?type=medicine&lang=zh" class="card-link" data-type="medicine">
+        <!-- 【修复】：为历史订单卡片补充了 data-type="history" -->
+        <a href="order-list.html?lang=zh" class="card-link" data-type="history">
             <div class="card">
-                <div class="icon-box">💊</div>
+                <div class="icon-box">📜</div>
                 <div class="card-content">
-                    <h3 id="card4-title">代买药品</h3>
-                    <p id="card4-desc">急用药品帮跑腿</p>
+                    <h3 id="card4-title">历史订单</h3>
+                    <p id="card4-desc">查看接单与收益</p>
                 </div>
             </div>
         </a>
@@ -102,17 +134,19 @@
         const translations = {
             zh: {
                 btnText: "한국어", mainTitle: "CampusGo 🚀", subTitle: "您的校园生活助手",
+                walletLabel: "我的钱包", progressLabel: "当前订单进度", progressUnit: "单进行中",
                 card1Title: "代取快递", card1Desc: "大件重物不用愁",
                 card2Title: "食堂带饭", card2Desc: "热乎饭菜送到手",
                 card3Title: "资料打印", card3Desc: "论文作业极速印",
-                card4Title: "代买药品", card4Desc: "急用药品帮跑腿"
+                card4Title: "历史订单", card4Desc: "查看接单与收益"
             },
             ko: {
                 btnText: "中文", mainTitle: "CampusGo 🚀", subTitle: "캠퍼스 라이프 도우미",
+                walletLabel: "내 지갑", progressLabel: "진행 중인 주문", progressUnit: "건 진행 중",
                 card1Title: "택배 수령", card1Desc: "무거운 짐 걱정 끝",
                 card2Title: "식당 식사 배달", card2Desc: "따뜻한 밥을 문앞까지",
                 card3Title: "자료 인쇄", card3Desc: "레포트 및 과제 빠른 출력",
-                card4Title: "약국 심부름", card4Desc: "급한 약 구매 대행"
+                card4Title: "주문 내역", card4Desc: "접수 및 수익 확인"
             }
         };
 
@@ -123,11 +157,26 @@
             updateText();
         }
 
+        // 从 localStorage 读取数据并更新首页看板
+        function updateDashboard() {
+            const balance = parseFloat(localStorage.getItem('campusgo_wallet') || '0');
+            document.getElementById('wallet-balance').innerText = balance.toFixed(2);
+
+            const tasks = JSON.parse(localStorage.getItem('campusgo_tasks') || '[]');
+            const activeCount = tasks.filter(task => task.status === 'ACCEPTED').length;
+            document.getElementById('active-orders').innerText = activeCount;
+        }
+
         function updateText() {
             const t = translations[currentLang];
             document.getElementById('lang-text').innerText = t.btnText;
             document.getElementById('main-title').innerText = t.mainTitle;
             document.getElementById('sub-title').innerText = t.subTitle;
+            
+            document.getElementById('wallet-label').innerText = t.walletLabel;
+            document.getElementById('progress-label').innerText = t.progressLabel;
+            document.getElementById('progress-unit').innerText = t.progressUnit;
+
             document.getElementById('card1-title').innerText = t.card1Title;
             document.getElementById('card1-desc').innerText = t.card1Desc;
             document.getElementById('card2-title').innerText = t.card2Title;
@@ -137,11 +186,17 @@
             document.getElementById('card4-title').innerText = t.card4Title;
             document.getElementById('card4-desc').innerText = t.card4Desc;
 
-            // 【核心】：动态更新所有卡片的跳转链接，把当前语言传给下一页
+            // 【修复】：优化链接更新逻辑，确保所有卡片都能正确跳转
             document.querySelectorAll('.card-link').forEach(link => {
                 const type = link.getAttribute('data-type');
-                link.setAttribute('href', `order.html?type=${type}&lang=${currentLang}`);
+                if (type === 'history') {
+                    link.setAttribute('href', `order-list.html?lang=${currentLang}`);
+                } else {
+                    link.setAttribute('href', `order.html?type=${type}&lang=${currentLang}`);
+                }
             });
+
+            updateDashboard();
         }
 
         window.onload = updateText;

@@ -52,7 +52,6 @@
 </head>
 <body>
     <div class="navbar">
-        <!-- 返回主页时，把当前语言也传回去 -->
         <a href="index.html" class="back-btn" id="back-link">←</a>
         <span class="nav-title" id="nav-title">发布跑腿任务</span>
     </div>
@@ -70,7 +69,7 @@
     </div>
 
     <div class="footer-action">
-        <button class="submit-btn" id="submit-btn" onclick="alert('演示版：发布成功！')">立即发布</button>
+        <button class="submit-btn" id="submit-btn">立即发布</button>
     </div>
 
     <script>
@@ -78,6 +77,7 @@
             zh: {
                 navTitle: "发布跑腿任务", bannerPrefix: "正在发布：",
                 labelRequire: "具体要求 (越详细越好)", labelPrice: "悬赏金额 (元)", submitBtn: "立即发布",
+                successMsg: "发布成功！正在跳转接单大厅...",
                 placeholders: {
                     express: "请输入取件码、驿站位置等信息...",
                     food: "请输入想吃的菜名、窗口号、忌口等信息...",
@@ -90,6 +90,7 @@
             ko: {
                 navTitle: "심부름 요청 등록", bannerPrefix: "진행 중: ",
                 labelRequire: "상세 요구사항 (구체적일수록 좋습니다)", labelPrice: "보상 금액 (위안)", submitBtn: "즉시 등록",
+                successMsg: "등록 성공! 접수 대기실로 이동합니다...",
                 placeholders: {
                     express: "택배 수령 코드, 픽업 위치 등을 입력하세요...",
                     food: "원하는 메뉴, 식당 창구, 알레르기 등을 입력하세요...",
@@ -101,33 +102,60 @@
             }
         };
 
+        let currentLang = 'zh';
+        let currentType = 'default';
+
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
-            let taskType = urlParams.get('type') || 'default';
-            let lang = urlParams.get('lang') || 'zh';
-            const t = translations[lang] || translations.zh;
+            currentType = urlParams.get('type') || 'default';
+            currentLang = urlParams.get('lang') || 'zh';
+            const t = translations[currentLang] || translations.zh;
 
-            // 更新页面所有文字
             document.getElementById('nav-title').innerText = t.navTitle;
             document.getElementById('label-require').innerText = t.labelRequire;
             document.getElementById('label-price').innerText = t.labelPrice;
             document.getElementById('submit-btn').innerText = t.submitBtn;
             document.getElementById('price-input').placeholder = t.pricePlaceholder;
 
-            // 更新顶部蓝色提示条
-            let displayType = taskType;
-            if(lang === 'ko') {
+            let displayType = currentType;
+            if(currentLang === 'ko') {
                 const typeMap = { express: '택배 수령', food: '식당 배달', print: '자료 인쇄', medicine: '약 구매' };
-                displayType = typeMap[taskType] || taskType;
+                displayType = typeMap[currentType] || currentType;
             }
             document.getElementById('typeDisplay').innerText = t.bannerPrefix + displayType;
+            document.getElementById('task-textarea').placeholder = t.placeholders[currentType] || t.placeholders.default;
+            document.getElementById('back-link').setAttribute('href', `index.html?lang=${currentLang}`);
 
-            // 更新输入框提示语
-            const textarea = document.getElementById('task-textarea');
-            textarea.placeholder = t.placeholders[taskType] || t.placeholders.default;
+            // 【核心新增】：绑定发布按钮点击事件，将数据存入 localStorage
+            document.getElementById('submit-btn').onclick = function() {
+                const content = document.getElementById('task-textarea').value.trim();
+                const price = document.getElementById('price-input').value.trim();
+                
+                if (!content || !price) {
+                    alert(currentLang === 'ko' ? '모든 항목을 입력하세요.' : '请填写完整信息！');
+                    return;
+                }
 
-            // 更新返回按钮的链接，保持语言状态
-            document.getElementById('back-link').setAttribute('href', `index.html?lang=${lang}`);
+                // 读取现有任务列表
+                let tasks = JSON.parse(localStorage.getItem('campusgo_tasks') || '[]');
+                
+                // 创建新任务对象
+                const newTask = {
+                    id: Date.now(), // 使用时间戳作为唯一ID
+                    type: currentType,
+                    content: content,
+                    price: parseFloat(price),
+                    status: 'PENDING', // PENDING: 待接单, ACCEPTED: 进行中, COMPLETED: 已完成
+                    createTime: new Date().toLocaleString()
+                };
+
+                tasks.unshift(newTask); // 新任务放在最前面
+                localStorage.setItem('campusgo_tasks', JSON.stringify(tasks));
+                
+                alert(t.successMsg);
+                // 跳转到接单大厅页面
+                window.location.href = `order-list.html?lang=${currentLang}`;
+            };
         };
     </script>
 </body>
